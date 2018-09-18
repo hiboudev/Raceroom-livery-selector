@@ -6,7 +6,7 @@ function write($text) {
 
 write ("PHP version: " . phpversion());
 
-$fileName = "r3e_data_.json";
+$fileName = "../tempFiles/r3e_data.json";
 
 
 //if(!file_exists($fileName)) {
@@ -16,6 +16,7 @@ $fileName = "r3e_data_.json";
 //}
 
 $file = file_get_contents($fileName, "r");
+unlink($fileName);
 if ($file === false) {
     write("Unable to open file.");
     exit;
