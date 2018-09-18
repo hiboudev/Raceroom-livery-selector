@@ -6,87 +6,119 @@ function write($text) {
 
 write ("PHP version: " . phpversion());
 
-$fileName = "../tempFiles/r3e_data.json";
+$filePath = "../tempFiles/store_cars_".uniqid().".json";
 
 
-//if(!file_exists($fileName)) {
-    write("Downloading file...");
-    if(!copy("https://raw.githubusercontent.com/sector3studios/r3e-spectator-overlay/master/r3e-data.json", $fileName))
-        write("Can't copy file.");
-//}
+if(!copy("http://game.raceroom.com/store/cars/?json", $filePath))
+    write("Can't copy file.");
 
-$file = file_get_contents($fileName, "r");
-unlink($fileName);
-if ($file === false) {
+
+$fileContent = file_get_contents($filePath, "r");
+unlink($filePath);
+
+if ($fileContent === false) {
     write("Unable to open file.");
     exit;
 }
 
-$file = trim($file);
-
-// Remove invalid ";" at end of file
-if(substr($file, -1) == ";")
-    $file = substr($file, 0, -1);
-
-$json = json_decode($file, true);
+$json = json_decode($fileContent, true);
 
 mysqli_report(MYSQLI_REPORT_STRICT);
 
 try {
     require "../auth.php";
-    write("Creating database...");
-    $conn = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
+    $db = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
 } catch (Exception $e ) {
-    //write ("Service unavailable");
     var_dump($e);
     exit;
 }
 
-if ($conn->connect_error)
-    die("Connection failed: " . $conn->connect_error);
+if ($db->connect_error)
+    die("Connection failed: " . $db->connect_error);
 
-$conn->query("DROP DATABASE IF EXISTS r3e_data;");
+$dbName = "r3e_data";
 
-$sql = "CREATE DATABASE r3e_data;";
-if ($conn->query($sql) === TRUE) {
-    write("Database created successfully");
+if(!databaseExists($db, $dbName)) {
+    createDatabase($db, $dbName);
 } else {
-    write("Error creating database: " . $conn->error);
+    emptyDatabase($db, $dbName);
 }
 
-$conn->query("USE r3e_data;");
+$start = microtime(true);
 
-// TODO Utiliser les données des Teams et non le TeamName des livrées car on y trouve des erreurs.
+write ("Feeding database...");
 
-$conn->query("CREATE TABLE cars (id INT PRIMARY KEY, name TEXT, classId INT);");
-$conn->query("CREATE TABLE classes (id INT PRIMARY KEY, name TEXT);");
-$conn->query("CREATE TABLE liveries (id INT PRIMARY KEY, name TEXT, carId INT, teamId INT, number INT);");
-$conn->query("CREATE TABLE teams (id INT PRIMARY KEY, name TEXT);");
+$classes = array();
 
-// TODO trim toutes les données et dire à JF de chercher ' ",' dans le json.
+foreach ($json["context"]["c"]["sections"][0]["items"] as $itemKey => $itemValue)
+    // actually there's only 'car' type in json
+    if($itemValue["type"] == "car") {
+        $className = $itemValue["car_class"]["name"];
+        if(!array_key_exists($className, $classes)) {
+            $db->query("INSERT INTO classes (name) VALUES ('{$className}');");
+            $result = $db->query("SELECT LAST_INSERT_ID();");
+            $classes[$className] = $result->fetch_array()[0];
+        }
 
-foreach ($json["cars"] as $key => $value) {
-    $conn->query("INSERT INTO cars (id, name, classId)
-                    VALUES ({$value["Id"]},'{$value["Name"]}',{$value["Class"]});");
-}
+        $carId = $itemValue["cid"];
+        $carName = $itemValue["name"];
+        $carClassId = $classes[$className];
 
-foreach ($json["classes"] as $key => $value) {
-    $conn->query("INSERT INTO classes (id, name) VALUES ({$value["Id"]},'{$value["Name"]}');");
-}
+        $db->query("INSERT INTO cars (id, name, classId)
+                        VALUES ({$carId},'{$carName}',{$carClassId});");
+        
+        foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
 
-foreach ($json["liveries"] as $key => $value) {
-    $liveryNumber = 9999;
-    preg_match('/^#(\d+)/', $value["Name"], $matches);
-    if (count($matches) > 1) {
-        $liveryNumber = $matches[1];
+            $liveryId = $liveryValue["cid"];
+            $liveryTitle = $liveryValue["title"];
+            $imageUrl = $liveryValue["thumb"];
+
+            $liveryNumber = 9999;
+            preg_match('/^#(\d+)/', $liveryValue["name"], $matches);
+            if (count($matches) > 1) {
+                $liveryNumber = $matches[1];
+            }
+
+            
+            $db->query("INSERT INTO liveries (id, title, carId, number, imageUrl)
+                        VALUES ({$liveryId},'{$liveryTitle}', {$carId}, {$liveryNumber}, '{$imageUrl}');"); // TODO take only end of url
+        }
     }
 
-    $conn->query("INSERT INTO liveries (id, name, carId, teamId, number) VALUES ({$value["Id"]},'{$value["Name"]}', {$value["Car"]}, '{$value["Team"]}', {$liveryNumber});");
+$db->close();
+write("Done in ". (microtime(true) - $start) ." ms.");
+
+function databaseExists($connection, $dbName) {
+    return $connection->query ("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{$dbName}'")->num_rows == 1;
 }
 
-foreach ($json["teams"] as $key => $value) {
-    $conn->query("INSERT INTO teams (id, name) VALUES ({$value["Id"]},'{$value["Name"]}');");
+function createDatabase ($connection, $dbName) {
+    write("Creating database...");
+
+    if ($connection->query("CREATE DATABASE IF NOT EXISTS {$dbName};") === TRUE) {
+        write("Database created successfully");
+    } else {
+        write("Error creating database: " . $connection->error);
+    }
+
+    $connection->query("USE {$dbName};");
+
+    $connection->query("CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));");
+    $connection->query("CREATE TABLE classes (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
+    $connection->query("CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, number INT NOT NULL, imageUrl TEXT NOT NULL, PRIMARY KEY(id));");
+
+    $connection->query("CREATE TABLE IF NOT EXISTS users ( id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
+    $connection->query("CREATE TABLE IF NOT EXISTS userLiveries ( userId INT NOT NULL, liveryId INT NOT NULL);");
 }
 
-$conn->close();
+function emptyDatabase ($connection, $dbName) {
+    write("Emptying database...");
+
+    $connection->query("USE {$dbName};");
+
+    $connection->query("TRUNCATE TABLE cars;");
+    $connection->query("TRUNCATE TABLE classes;");
+    $connection->query("TRUNCATE TABLE liveries;");
+}
+
 ?>
