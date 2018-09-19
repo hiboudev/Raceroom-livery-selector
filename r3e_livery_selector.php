@@ -21,11 +21,12 @@
 
             .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-color: #f2f2f2; margin: 2px 2px;}
             .thumbnail:hover {background-color: #fff;}
-            .thumbnailNotOwned {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-color: #999; opacity: 0.5; margin: 2px 2px;}
-            .thumbnailNotOwned .thumbnailText {color:#000}
-            .image {width: 460px; height: 230px;}
-            .thumbnailText {position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #888; font-size: 90%;}
+            .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #ccc; margin: 2px 2px;}
+            .thumbnailNotOwned .thumbnailText {color:#777}
+            .image {width: 460px; height: 230px; z-index:0}
+            .thumbnailText {position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #888; font-size: 90%; z-index:2}
             .thumbnail:hover .thumbnailText {color: #666;}
+            .notSureIfOwned {position: absolute; top: 10px; right: 10px; color: #888; font-size: 130%; font-weight:bold; z-index:1}
 
             .splash {position: relative; top: 100px; text-align: center}
             .tip {text-align: center; font-style: italic}

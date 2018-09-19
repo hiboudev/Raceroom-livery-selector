@@ -57,7 +57,6 @@ function getCars($classId){
 
 function getLiveries($carId, $userId){
     require "auth.php";
-    
     $db = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
     if ($db->connect_error)
         die("Connection failed: " . $db->connect_error);
@@ -65,7 +64,6 @@ function getLiveries($carId, $userId){
     $db->query("USE r3e_data");
     
     $userExists = $userId == -1 ? false : $db->query("SELECT * FROM users WHERE id={$userId};")->num_rows == 1;
-    
     if($userExists)
         getUserLiveries($db, $carId, $userId);
     else
@@ -75,16 +73,20 @@ function getLiveries($carId, $userId){
 }
 
 function getUserLiveries($db, $carId, $userId) {
-    $result = $db->query("SELECT *, IF(userLiveries.liveryId IS NULL, FALSE, TRUE) as owned FROM liveries LEFT JOIN userLiveries ON (userLiveries.userId={$userId} AND liveries.id = userLiveries.liveryId) WHERE carId={$carId} ORDER BY owned DESC, number, title");
+    // 'owned' in the request is used only to sort results, but there's still a doubt on the default livery purchase.
+    $result = $db->query("SELECT liveries.imageUrl, liveries.isFree, liveries.id, liveries.title, userLiveries.liveryId AS userLiveryId, IF(userLiveries.liveryId IS NULL, IF(cars.defaultLiveryId=liveries.id, TRUE, FALSE), TRUE) as owned, cars.defaultLiveryId FROM liveries LEFT JOIN userLiveries ON (userLiveries.userId={$userId} AND liveries.id = userLiveries.liveryId), cars WHERE carId={$carId} AND cars.id={$carId} ORDER BY owned DESC, number, title");
     
     $all = $result->fetch_all(MYSQLI_ASSOC);
     
     for ($i=0; $i < count($all); $i++) {
         $row = $all[$i];
-        $owned = $row["owned"] || $row["isFree"];
-        $cssClass = $owned ? "thumbnail" : "thumbnailNotOwned";
+        $owned = $row["userLiveryId"] != null || $row["isFree"];
+        $isDefault = $row["defaultLiveryId"] == $row["id"];
 
-        echo "<div class=\"{$cssClass}\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image\" src=\"{$row['imageUrl']}\" /><span class=\"thumbnailText\">{$row["title"]}</span></div>";
+        $cssClass = $owned || $isDefault ? "thumbnail" : "thumbnailNotOwned";
+        $notSureIfOwnedHtml = !$owned && $isDefault ? "<span class=\"notSureIfOwned\">?</span>" : "";
+
+        echo "<div class=\"{$cssClass}\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image\" src=\"{$row['imageUrl']}\" />{$notSureIfOwnedHtml}<span class=\"thumbnailText\">{$row["title"]}</span></div>";
     }
 }
 

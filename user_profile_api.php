@@ -40,28 +40,21 @@ function synchronizeUserProfile ($username) {
         foreach ($contentValue["items"] as $itemKey => $itemValue)
             if ($itemValue["type"] == "car") {
                 $carId = $itemValue["id"];
-
-                // $connection->query("INSERT into userLiveries VALUES ({$userId}, {$defaultLiveryId});");
-
                 $result = $connection->query("SELECT defaultLiveryId FROM cars WHERE id={$carId}");
                 $defaultLiveryId = $result->fetch_array()[0]; // TODO La RUF n'a pas de livrée par défaut, voir pas de livrée du tout
 
-                $result = $connection->query("SELECT userLiveries.liveryId, liveries.carId FROM userLiveries, liveries WHERE liveries.carId={$carId} AND userLiveries.liveryId=liveries.id");
-                //write(var_dump($result));
+                $result = $connection->query("SELECT userLiveries.liveryId, liveries.carId FROM userLiveries, liveries WHERE userLiveries.userId={$userId} AND liveries.carId={$carId} AND userLiveries.liveryId=liveries.id");
+                
                 if($result->num_rows == 0) {
                     $connection->query("INSERT into userLiveries VALUES ({$userId}, {$defaultLiveryId});");
                 }
-                // write($carId.", def :".$defaultLiveryId);
 
-                foreach ($itemValue["content_info"]["livery_images"] as $carLiveryKey => $carLiveryValue) {
-                    // write($carLiveryValue["cid"]);
-                    $count++;
-                    // write(var_dump($carLiveryValue["owned"] == 'true'));
-                    // $connection->query("INSERT into userLiveries VALUES ({$userId}, {$carLiveryValue["cid"]});");
-                }
+                // foreach ($itemValue["content_info"]["livery_images"] as $carLiveryKey => $carLiveryValue) {
+                //     // write($carLiveryValue["cid"]);
+                //     // write(var_dump($carLiveryValue["owned"] == 'true'));
+                //     // $connection->query("INSERT into userLiveries VALUES ({$userId}, {$carLiveryValue["cid"]});");
+                // }
             }
-            // write("count: ".$count);
-            // write("count2: ".$count2);
 
     $connection->close();
 
@@ -69,7 +62,7 @@ function synchronizeUserProfile ($username) {
 }
 
 function downloadUserProfile ($username) {
-    $fileName = 'tempFiles/' . $username . uniqid();
+    $fileName = 'tempFiles/' . $username . uniqid(); //'tempFiles/hiboudev';
 
     if(!copy("http://game.raceroom.com/users/{$username}/purchases?json", $fileName))
         die("Can't copy file.");
