@@ -21,11 +21,14 @@
 
             .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-color: #f2f2f2; margin: 2px 2px;}
             .thumbnail:hover {background-color: #fff;}
+            .thumbnailNotOwned {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-color: #999; opacity: 0.5; margin: 2px 2px;}
+            .thumbnailNotOwned .thumbnailText {color:#000}
             .image {width: 460px; height: 230px;}
             .thumbnailText {position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #888; font-size: 90%;}
             .thumbnail:hover .thumbnailText {color: #666;}
 
-            .tip {text-align: center; font-style: italic; position: relative; top: 100px}
+            .splash {position: relative; top: 100px; text-align: center}
+            .tip {text-align: center; font-style: italic}
         </style>
 
         <script>
@@ -51,7 +54,7 @@
                 $.ajax({
                     type: "GET",
                     url: "r3e_db_api.php",
-                    data: "carId=" + carId,
+                    data: "carId=" + carId + "&userId=" + userId,
                     success: function(result) {
                         $("#thumbnailContainer").html(result);
                     }
@@ -79,6 +82,35 @@
             function removeNotification() {
                 $('#notification').css('display', 'none');
             }
+            
+            synchronizingProfile = false;
+            userId = -1;
+
+            function synchronizeProfile(event) {
+                event.preventDefault();
+
+                if(synchronizingProfile) return;
+                synchronizingProfile = true;
+                // $("html").css("pointer-events", "none");
+
+                username = $("#profileField").val();
+                if(username == "" || username == null) return;
+                
+                $.ajax({
+                    type: "GET",
+                    url: "user_profile_api.php",
+                    data: "username=" + username,
+                    success: function(result) {
+                        userId = result;
+                    },
+                    error: function (a, b, c) {
+                        alert("Une erreur est survenue.");
+                    },
+                    complete: function () {
+                        synchronizingProfile = false;
+                    }
+                });
+            }
     
         </script>
     </head>
@@ -95,7 +127,13 @@
         </div>
 
         <div id="thumbnailContainer">
-            <p class="tip">Cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</p>
+            <div class="splash">
+                <p class="tip">Cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</p>
+                <form onSubmit="synchronizeProfile(event)">
+                    <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
+                    <button type="submit">Valider</button>
+                </form>
+            </div>
         </div>
 
     </body>

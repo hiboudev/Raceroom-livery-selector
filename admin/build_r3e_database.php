@@ -50,6 +50,8 @@ write ("Feeding database...");
 
 $classes = array();
 
+$count = 0;
+
 foreach ($json["context"]["c"]["sections"][0]["items"] as $itemKey => $itemValue)
     // actually there's only 'car' type in json
     if($itemValue["type"] == "car") {
@@ -63,15 +65,22 @@ foreach ($json["context"]["c"]["sections"][0]["items"] as $itemKey => $itemValue
         $carId = $itemValue["cid"];
         $carName = $itemValue["name"];
         $carClassId = $classes[$className];
+        $defaultLiveryId = $itemValue["livery_id"];
 
-        $db->query("INSERT INTO cars (id, name, classId)
-                        VALUES ({$carId},'{$carName}',{$carClassId});");
+        $db->query("INSERT INTO cars (id, name, classId, defaultLiveryId)
+                        VALUES ({$carId},'{$carName}',{$carClassId}, {$defaultLiveryId});");
         
         foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
 
             $liveryId = $liveryValue["cid"];
             $liveryTitle = $liveryValue["title"];
             $imageUrl = $liveryValue["thumb"];
+            // write("exists: ".array_key_exists("free", $liveryValue));
+            // write("free: ".($liveryValue["free"]==true));
+            // echo "[".true."-".false."]";
+            $isFree = $liveryValue["free"] == true ? 1 : 0;
+
+            $count++;
 
             $liveryNumber = 9999;
             preg_match('/^#(\d+)/', $liveryValue["name"], $matches);
@@ -79,11 +88,10 @@ foreach ($json["context"]["c"]["sections"][0]["items"] as $itemKey => $itemValue
                 $liveryNumber = $matches[1];
             }
 
-            
-            $db->query("INSERT INTO liveries (id, title, carId, number, imageUrl)
-                        VALUES ({$liveryId},'{$liveryTitle}', {$carId}, {$liveryNumber}, '{$imageUrl}');"); // TODO take only end of url
+            $db->query("INSERT INTO liveries (id, title, carId, number, imageUrl, isFree) VALUES ({$liveryId},'{$liveryTitle}', {$carId}, {$liveryNumber}, '{$imageUrl}', {$isFree});"); // TODO take only end of url
         }
     }
+write( "<br />count:".$count);
 
 $db->close();
 write("Done in ". (microtime(true) - $start) ." ms.");
@@ -103,9 +111,10 @@ function createDatabase ($connection, $dbName) {
 
     $connection->query("USE {$dbName};");
 
-    $connection->query("CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));");
+    $connection->query("CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, defaultLiveryId INT NOT NULL, PRIMARY KEY(id));");
     $connection->query("CREATE TABLE classes (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
-    $connection->query("CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, number INT NOT NULL, imageUrl TEXT NOT NULL, PRIMARY KEY(id));");
+    $connection->query("CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, number INT NOT NULL,
+                            imageUrl TEXT NOT NULL, isFree INT NOT NULL, PRIMARY KEY(id));");
 
     $connection->query("CREATE TABLE IF NOT EXISTS users ( id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
     $connection->query("CREATE TABLE IF NOT EXISTS userLiveries ( userId INT NOT NULL, liveryId INT NOT NULL);");
