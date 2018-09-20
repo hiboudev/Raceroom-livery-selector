@@ -3,10 +3,10 @@
 if(isset($_GET['classId']))
     getCars($_GET['classId']);
 else if(isset($_GET['carId'])) {
-    if(isset($_GET['userId']))
-        getLiveries($_GET['carId'], $_GET['userId']);
+    if(isset($_GET['username']))
+        getLiveries($_GET['carId'], $_GET['username']);
     else
-        getLiveries($_GET['carId'], -1);
+        getLiveries($_GET['carId'], null);
 }
 
 function getClasses () {
@@ -55,7 +55,7 @@ function getCars($classId){
     $db->close();
 }
 
-function getLiveries($carId, $userId){
+function getLiveries($carId, $username){
     require "auth.php";
     $db = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
     if ($db->connect_error)
@@ -63,9 +63,9 @@ function getLiveries($carId, $userId){
     
     $db->query("USE r3e_data");
     
-    $userExists = $userId == -1 ? false : $db->query("SELECT * FROM users WHERE id={$userId};")->num_rows == 1;
-    if($userExists)
-        getUserLiveries($db, $carId, $userId);
+    $userResult = $username == null ? false : $db->query("SELECT * FROM users WHERE name='{$username}';");
+    if($userResult != null && $userResult->num_rows == 1)
+        getUserLiveries($db, $carId, $userResult->fetch_assoc()["id"]);
     else
         getAllLiveries($db, $carId);
 

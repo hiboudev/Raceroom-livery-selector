@@ -2,7 +2,18 @@
 
 if(isset($_GET['username']))
     synchronizeUserProfile($_GET['username']);
+else if (isset($_GET['checkUsername']))
+    checkUsername($_GET['checkUsername']);
 
+
+function checkUsername ($username) {
+    $connection = getDatabaseConnection();
+    if(!userExists($connection, $username)) {
+        $connection->close(); // TODO revoir les ouvertures/fermetures de connexion
+        synchronizeUserProfile($username);
+    }
+    echo true;
+}
 
 function synchronizeUserProfile ($username) {
     $connection = getDatabaseConnection();
@@ -58,7 +69,7 @@ function synchronizeUserProfile ($username) {
 
     $connection->close();
 
-    echo $userId; // Réponse pour JS
+    echo $username; // Réponse pour JS
 }
 
 function downloadUserProfile ($username) {
@@ -87,6 +98,10 @@ function getDatabaseConnection () {
     $connection->query("USE r3e_data;");
 
     return $connection;
+}
+
+function userExists($connection, $username) {
+    return $connection->query("SELECT id FROM users WHERE name='{$username}';")->num_rows == 1;
 }
 
 function checkUserExists($connection, $username) {
