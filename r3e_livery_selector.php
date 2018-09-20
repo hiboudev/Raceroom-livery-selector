@@ -33,6 +33,12 @@
 
             .splash {position: relative; top: 100px; text-align: center}
             .tip {text-align: center; font-style: italic}
+
+            .loginBox {display: none; margin-top: 50px}
+            .subLoginBox {margin-top: 20px}
+            .loginForm {display: none}
+            .openLoginFormLink {display: none;}
+            .resyncButton {display:inline-block}
         </style>
 
         <script>
@@ -42,12 +48,36 @@
 
             timeoutId = -1;
             synchronizingProfile = false;
+            globalUsername = null;
 
             function onPageLoaded() {
-                setUsername(Cookie.getValue('username'), false);
+                var username = Cookie.getValue('username');
 
                 if(username != null && username != '')
                     checkProfile(username);
+                else
+                    initializeLoginBox();
+            }
+
+            function openLoginFormClicked() {
+                $('#openLoginFormLink').css("display", "none");
+                $('#loginForm').css("display", "block");
+            }
+
+            function initializeLoginBox() {
+                $('#loginBox').css("display", "block");
+
+                if(globalUsername != "" && globalUsername != null) {
+                    $('#loggedPrompt').html("Identifié avec le nom d'utilisateur '"+globalUsername+"'.");
+                    $('#resyncButton').css("display", "inline-block");
+                    $('#openLoginFormLink').css("display", "block");
+                    $('#loginForm').css("display", "none");
+                    $('#profileField').val("");
+                } else {
+                    $('#loggedPrompt').html("Pour distinguer les livrées que vous possédez, veuillez entrer votre nom de profil Raceroom.");
+                    $('#resyncButton').css("display", "none");
+                    $('#loginForm').css("display", "block");
+                }
             }
 
             function getCars(classId) {
@@ -72,7 +102,7 @@
                 $.ajax({
                     type: "GET",
                     url: "r3e_db_api.php",
-                    data: "carId=" + carId + "&username=" + username,
+                    data: "carId=" + carId + "&username=" + globalUsername,
                     success: function(result) {
                         $("#thumbnailContainer").html(result);
                     }
@@ -105,6 +135,8 @@
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
                 
+                var initLoginBox = true;
+
                 $.ajax({
                     type: "GET",
                     url: "user_profile_api.php",
@@ -115,8 +147,10 @@
 
                         switch(result) {
                             case '0':
+                                setUsername(username);
                             break;
                             case '1':
+                                initLoginBox = false;
                                 // Doesn't exists in our DB so create profile.
                                 synchronizeProfile(username);
                         }
@@ -126,19 +160,25 @@
                         setUsername("");
                     },
                     complete: function () {
+                        if(initLoginBox) initializeLoginBox();
                     }
                 });
             }
             
-            function synchronizeClicked(event) {
+            function loginClicked(event) {
                 event.preventDefault();
                 
-                username = $("#profileField").val();
+                var username = $("#profileField").val();
                 if(username != "" && username != null)
-                    synchronizeProfile(username);
+                    checkProfile(username);
             }
 
-            function synchronizeProfile(usernameTemp) {
+            function resyncClicked() {
+                if(globalUsername != "" && globalUsername != null)
+                    synchronizeProfile(globalUsername);
+            }
+
+            function synchronizeProfile(username) {
                 $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 if(synchronizingProfile) return;
@@ -147,11 +187,11 @@
                 $.ajax({
                     type: "GET",
                     url: "user_profile_api.php",
-                    data: "username=" + usernameTemp,
+                    data: "username=" + username,
                     success: function(result) {
                         switch (result) {
                             case '1':
-                                alert("L'utilisateur '"+usernameTemp+"' n'a pas été trouvé sur la boutique Raceroom.");
+                                alert("L'utilisateur '"+username+"' n'a pas été trouvé sur la boutique Raceroom.");
                                 setUsername("");
                                 break;
                             case '2':
@@ -170,13 +210,14 @@
                     complete: function () {
                         synchronizingProfile = false;
                         $.unblockUI();
+                        initializeLoginBox();
                     }
                 });
             }
 
-            function setUsername (_username, updateCookie = true) {
-                if(updateCookie) Cookie.setValue('username', _username);
-                username = _username;
+            function setUsername (_username) {
+                Cookie.setValue('username', _username);
+                globalUsername = _username;
                 $('#usernameField').text(_username);
             }
     
@@ -201,10 +242,17 @@
         <div id="thumbnailContainer">
             <div class="splash">
                 <p class="tip">Cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</p>
-                <form onSubmit="synchronizeClicked(event)">
-                    <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
-                    <button type="submit">Valider</button>
-                </form>
+                <div id="loginBox" class="loginBox">
+                    <span id="loggedPrompt"></span>
+                    <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>
+                    <div class="subLoginBox">
+                        <a id="openLoginFormLink" class="openLoginFormLink" onClick="openLoginFormClicked()" href="#">Changer de profil</a>
+                        <form id="loginForm" class="loginForm" onSubmit="loginClicked(event)">
+                            <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
+                            <button type="submit">Valider</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
