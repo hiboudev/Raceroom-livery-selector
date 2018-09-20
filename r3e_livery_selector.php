@@ -100,19 +100,25 @@
             }
 
             function checkProfile(username) {
-                $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
+                $.blockUI({ message: '<h1>Vérification du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
-                // $("html").css("pointer-events", "none");
                 
                 $.ajax({
                     type: "GET",
                     url: "user_profile_api.php",
                     data: "checkUsername=" + username,
                     success: function(result) {
-                        if(result != true) {
-                            setUsername("");
+                        synchronizingProfile = false;
+                        $.unblockUI();
+
+                        switch(result) {
+                            case '0':
+                            break;
+                            case '1':
+                                // Doesn't exists in our DB so create profile.
+                                synchronizeProfile(username);
                         }
                     },
                     error: function (a, b, c) {
@@ -120,22 +126,23 @@
                         setUsername("");
                     },
                     complete: function () {
-                        synchronizingProfile = false;
-                        $.unblockUI();
                     }
                 });
             }
-
-            function synchronizeProfile(event) {
+            
+            function synchronizeClicked(event) {
                 event.preventDefault();
                 
+                username = $("#profileField").val();
+                if(username != "" && username != null)
+                    synchronizeProfile(username);
+            }
+
+            function synchronizeProfile(usernameTemp) {
                 $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
-
-                usernameTemp = $("#profileField").val();
-                if(usernameTemp == "" || usernameTemp == null) return;
                 
                 $.ajax({
                     type: "GET",
@@ -145,14 +152,16 @@
                         switch (result) {
                             case '1':
                                 alert("L'utilisateur '"+usernameTemp+"' n'a pas été trouvé sur la boutique Raceroom.");
+                                setUsername("");
                                 break;
                             case '2':
                             case '3':
                                 alert("Une erreur code '"+result+"' s'est produite.");
-                            return;
-                            break;
+                                setUsername("");
+                                break;
+                            default:
+                                setUsername(result);
                         }
-                        setUsername(result);
                     },
                     error: function (a, b, c) {
                         alert("Une erreur est survenue.");
@@ -166,7 +175,7 @@
             }
 
             function setUsername (_username, updateCookie = true) {
-                if(updateCookie) Cookie.setValue(_username);
+                if(updateCookie) Cookie.setValue('username', _username);
                 username = _username;
                 $('#usernameField').text(_username);
             }
@@ -178,7 +187,7 @@
 
         <div class="header">
             <div class="headerRightBox">
-                <div id="usernameField" class="username">sdfsdf</div>
+                <div id="usernameField" class="username"></div>
                 <input id="linkField" type="text" readonly />
             </div>
             <span id="notification" class="notification">Lien copié dans le presse-papier !</span>
@@ -192,7 +201,7 @@
         <div id="thumbnailContainer">
             <div class="splash">
                 <p class="tip">Cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</p>
-                <form onSubmit="synchronizeProfile(event)">
+                <form onSubmit="synchronizeClicked(event)">
                     <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
                     <button type="submit">Valider</button>
                 </form>

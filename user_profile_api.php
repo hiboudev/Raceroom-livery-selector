@@ -6,13 +6,17 @@ else if (isset($_GET['checkUsername']))
     checkUsername($_GET['checkUsername']);
 
 
+/**
+ * Print (all strings):
+ * - 0: registered user.
+ * - 1: not registered user.
+ */
 function checkUsername ($username) {
     $connection = getDatabaseConnection();
-    if(!userExists($connection, $username)) {
-        $connection->close(); // TODO revoir les ouvertures/fermetures de connexion
-        synchronizeUserProfile($username);
-    }
-    echo true;
+    $userExists = userExists($connection, $username);
+    $connection->close();
+    
+    exit($userExists ? "0" : "1");
 }
 
 /**
