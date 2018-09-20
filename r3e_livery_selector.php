@@ -133,7 +133,6 @@
                 
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
-                // $("html").css("pointer-events", "none");
 
                 usernameTemp = $("#profileField").val();
                 if(usernameTemp == "" || usernameTemp == null) return;
@@ -143,7 +142,16 @@
                     url: "user_profile_api.php",
                     data: "username=" + usernameTemp,
                     success: function(result) {
-                        // TODO gérer codes d'erreurs (tester avec un pseudo non existant)
+                        switch (result) {
+                            case '1':
+                                alert("L'utilisateur '"+usernameTemp+"' n'a pas été trouvé sur la boutique Raceroom.");
+                                break;
+                            case '2':
+                            case '3':
+                                alert("Une erreur code '"+result+"' s'est produite.");
+                            return;
+                            break;
+                        }
                         setUsername(result);
                     },
                     error: function (a, b, c) {

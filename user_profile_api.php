@@ -15,37 +15,25 @@ function checkUsername ($username) {
     echo true;
 }
 
+/**
+ * Print (all strings):
+ * - username if valid.
+ * - 1: profile not found on R3E store
+ * - 2: error reading downloaded profile file
+ * - 3: can't parse json
+ */
 function synchronizeUserProfile ($username) {
     $connection = getDatabaseConnection();
     $json = downloadUserProfile ($username);
     $userId = checkUserExists($connection, $username);
 
-    // write("Deleting current user entries...");
-
     $connection->query("DELETE FROM userLiveries WHERE userId = $userId;");
     
-    // write("Feeding user profile...");
-
-    $count = 0;
-    // $count2 = 0;
-    $liveries = array();
+    // TODO Moyen d'optimiser en une seule boucle ?
     foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue)
         foreach ($contentValue["items"] as $itemKey => $itemValue)
-            if($itemValue["type"] == "livery") {
-
+            if($itemValue["type"] == "livery")
                 $connection->query("INSERT into userLiveries VALUES ({$userId}, {$itemValue["id"]});");
-
-                // foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
-                    //write($itemValue["owned"]);
-                    // $count2++;
-                    // write($itemValue["id"]);
-
-                    // if(!array_key_exists($liveryValue["cid"], $liveries)) { // So many dupplicates in this json, 11000 liveries instead of 1000... :'(
-                    //     $connection->query("INSERT into userLiveries VALUES ({$userId}, {$liveryValue["cid"]});");
-                    //     $liveries[$liveryValue["cid"]] = true;
-                    // }
-                // }
-            } 
     
     foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue)
         foreach ($contentValue["items"] as $itemKey => $itemValue)
@@ -56,40 +44,31 @@ function synchronizeUserProfile ($username) {
 
                 $result = $connection->query("SELECT userLiveries.liveryId, liveries.carId FROM userLiveries, liveries WHERE userLiveries.userId={$userId} AND liveries.carId={$carId} AND userLiveries.liveryId=liveries.id");
                 
-                if($result->num_rows == 0) {
+                if($result->num_rows == 0)
                     $connection->query("INSERT into userLiveries VALUES ({$userId}, {$defaultLiveryId});");
-                }
-
-                // foreach ($itemValue["content_info"]["livery_images"] as $carLiveryKey => $carLiveryValue) {
-                //     // write($carLiveryValue["cid"]);
-                //     // write(var_dump($carLiveryValue["owned"] == 'true'));
-                //     // $connection->query("INSERT into userLiveries VALUES ({$userId}, {$carLiveryValue["cid"]});");
-                // }
             }
 
     $connection->close();
 
-    echo $username; // Réponse pour JS
+    exit($username); // Réponse pour JS
 }
 
 function downloadUserProfile ($username) {
     $fileName = 'tempFiles/' . $username . uniqid(); //'tempFiles/hiboudev';
-
-    if(!copy("http://game.raceroom.com/users/{$username}/purchases?json", $fileName))
-        die("Can't copy file.");
-
-    // write ("File copied.");
+    
+    @copy("http://game.raceroom.com/users/{$username}/purchases?json", $fileName) or exit('1');
 
     $fileContent = file_get_contents($fileName, "r");
     if ($fileContent === false)
-        die("Unable to open file.");
-    
-    // $fileContent = str_replace("true", "\"true\"", $fileContent);
-    // $fileContent = str_replace("false", "\"false\"", $fileContent);
+        exit('2');
 
     unlink ($fileName);
+    
+    $json = json_decode($fileContent, true);
+    if($json == null)
+        exit ('3');
 
-    return json_decode($fileContent, true);
+    return $json;
 }
 
 function getDatabaseConnection () {
