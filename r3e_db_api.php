@@ -73,18 +73,27 @@ function getLiveries($carId, $username){
 }
 
 function getUserLiveries($db, $carId, $userId) {
-    // 'owned' in the request is used only to sort results, but there's still a doubt on the default livery purchase.
-    $result = $db->query("SELECT liveries.imageUrl, liveries.isFree, liveries.id, liveries.title, userLiveries.liveryId AS userLiveryId, IF(userLiveries.liveryId IS NULL, IF(cars.defaultLiveryId=liveries.id, TRUE, FALSE), TRUE) as owned, cars.defaultLiveryId FROM liveries LEFT JOIN userLiveries ON (userLiveries.userId={$userId} AND liveries.id = userLiveries.liveryId), cars WHERE carId={$carId} AND cars.id={$carId} ORDER BY owned DESC, number, title");
+    // 'owned' in the request is used only to sort results, I add the default livery for graphical design purpose but there's still a doubt on this purchase.
+    $result = $db->query("SELECT liveries.imageUrl, liveries.isFree, liveries.id, liveries.title, userLiveries.liveryId AS userLiveryId
+            , IF(userLiveries.liveryId IS NULL AND liveries.isFree=0
+                , IF(userCars.carId IS NULL, FALSE
+                    , IF(cars.defaultLiveryId=liveries.id, TRUE, FALSE)), TRUE) as owned
+            , cars.defaultLiveryId FROM liveries LEFT JOIN userLiveries ON
+                (userLiveries.userId={$userId} AND liveries.id = userLiveries.liveryId)
+            , cars LEFT JOIN userCars ON (userCars.userId={$userId} AND cars.id = userCars.carId)
+            WHERE liveries.carId={$carId} AND cars.id={$carId}
+            ORDER BY owned DESC, number, title");
     
     $all = $result->fetch_all(MYSQLI_ASSOC);
     
     for ($i=0; $i < count($all); $i++) {
         $row = $all[$i];
-        $owned = $row["userLiveryId"] != null || $row["isFree"];
         $isDefault = $row["defaultLiveryId"] == $row["id"];
 
-        $cssClass = $owned || $isDefault ? "thumbnail" : "thumbnailNotOwned";
-        $notSureIfOwnedHtml = !$owned && $isDefault ? "<span class=\"notSureIfOwned\">?</span>" : "";
+        $cssClass = $row["owned"] ? "thumbnail" : "thumbnailNotOwned";
+        // TODO C'est le bordel toute cette logique
+        $owned2 = $row["userLiveryId"] != null || $row["isFree"];
+        $notSureIfOwnedHtml = $row["owned"] && !$owned2 && $isDefault ? "<span class=\"notSureIfOwned\">?</span>" : "";
 
         echo "<div class=\"{$cssClass}\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image\" src=\"{$row['imageUrl']}\" />{$notSureIfOwnedHtml}<span class=\"thumbnailText\">{$row["title"]}</span></div>";
     }

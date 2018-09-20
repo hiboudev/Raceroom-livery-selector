@@ -50,6 +50,8 @@ function synchronizeUserProfile ($username) {
                 
                 if($result->num_rows == 0)
                     $connection->query("INSERT into userLiveries VALUES ({$userId}, {$defaultLiveryId});");
+
+                $connection->query("INSERT into userCars VALUES ({$userId}, {$carId});");
             }
 
     $connection->close();

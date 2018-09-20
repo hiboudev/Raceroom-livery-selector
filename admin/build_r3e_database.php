@@ -118,6 +118,8 @@ function createDatabase ($connection, $dbName) {
 
     $connection->query("CREATE TABLE IF NOT EXISTS users ( id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
     $connection->query("CREATE TABLE IF NOT EXISTS userLiveries ( userId INT NOT NULL, liveryId INT NOT NULL);");
+    // I need this only cause R3E store doesn't list the default liveries. This table helps to know when a default livery is not owned in the case we don't own the car.
+    $connection->query("CREATE TABLE IF NOT EXISTS userCars ( userId INT NOT NULL, carId INT NOT NULL);");
 }
 
 function emptyDatabase ($connection, $dbName) {
