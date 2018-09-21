@@ -19,7 +19,7 @@
             select {width: 300px; margin: 1px}
             .listPrompt {font-style: italic; color: #999;}
             .headerRightBox {float: right}
-            .username {text-align:right;}
+            .username {text-align:right; font-size:80%}
             .notification {background-color: #666; font-weight: bold; color:#ddd; position: absolute; right: 0; top:1em; margin-top:9px; padding: 3px; display: none}
 
             .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-color: #f2f2f2; margin: 2px 2px;}
@@ -31,16 +31,18 @@
             .thumbnail:hover .thumbnailText {color: #666;}
             .notSureIfOwned {position: absolute; top: 10px; right: 10px; color: #999; font-size: 130%; font-weight:bold; z-index:1}
 
-            .splash {position: relative; top: 100px; text-align: center}
-            .tip {text-align: center; font-style: italic}
+            .splash {position: relative; top: 20px; text-align: center; color:#444}
+            .tip {font-size:100%}
 
+            .loggedPrompt {margin-right:10px}
             .loginBox {display: none; margin-top: 50px}
             .subLoginBox {margin-top: 20px}
             .loginForm {display: none}
-            .openLoginFormLink {display: none;}
+            .openLoginFormLink {display:none; font-size:90%}
             .resyncButton {display:inline-block}
+            .resyncTip {font-size:90%; font-style:italic; margin-top:6px; color:#666}
 
-            .profileHelpLink {display:block; margin-top: 40px}
+            .profileHelpLink {display:block; margin-top: 40px; font-size:90%}
             .profileHelp {display:none;margin-top: 40px}
             
             .profileHelp img {margin: 30px;}
@@ -74,13 +76,13 @@
                 $('#loginBox').css("display", "block");
 
                 if(globalUsername != "" && globalUsername != null) {
-                    $('#loggedPrompt').html("Identifié avec le nom d'utilisateur '"+globalUsername+"'.");
+                    $('#loggedPrompt').html("Profil : <b>"+globalUsername+"</b>");
                     $('#resyncButton').css("display", "inline-block");
                     $('#openLoginFormLink').css("display", "block");
                     $('#loginForm').css("display", "none");
                     $('#profileField').val("");
                 } else {
-                    $('#loggedPrompt').html("Pour distinguer les livrées que vous possédez, veuillez entrer votre nom de profil Raceroom.");
+                    $('#loggedPrompt').html("Profil :");
                     $('#resyncButton').css("display", "none");
                     $('#loginForm').css("display", "block");
                 }
@@ -252,10 +254,12 @@
 
         <div id="thumbnailContainer">
             <div class="splash">
-                <p class="tip">Cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</p>
+                <h1>Sélecteur de livrée Raceroom</h1>
+                <div class="tip"><p><b>Cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p><p>Il n'est actuellement pas toujours possible de savoir si vous possédez la livrée par défaut d'une voiture, un point d'interrogation le signale.</p></div>
                 <div id="loginBox" class="loginBox">
-                    <span id="loggedPrompt"></span>
+                    <span id="loggedPrompt" class="loggedPrompt"></span>
                     <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>
+                    <p class="resyncTip">Resynchronisez votre profil si vous avez fait des achats depuis votre dernière visite.</p>
                     <div class="subLoginBox">
                         <a id="openLoginFormLink" class="openLoginFormLink" onClick="openLoginFormClicked()" href="#">Changer de profil</a>
                         <div id="loginForm" class="loginForm">
