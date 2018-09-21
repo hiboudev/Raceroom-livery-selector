@@ -16,6 +16,7 @@
             body {margin: 0px;}
 
             .header {box-sizing: border-box; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
+            .homeImage {width:20px; height:20px; float:left;margin-right:8px}
             select {width: 300px; margin: 1px}
             .listPrompt {font-style: italic; color: #999;}
             .headerRightBox {float: right}
@@ -249,6 +250,7 @@
             </div>
             <span id="notification" class="notification">Lien copié dans le presse-papier !</span>
             
+            <a href="."><img class="homeImage" src="images/home.png"/></a>
             <select name="carClassSelector" onChange="getCars(this.value)">
                 <?php getClasses(); ?>
             </select>
