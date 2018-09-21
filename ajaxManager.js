@@ -9,18 +9,18 @@ class AjaxManager {
 
         var completeFunction = params['complete'];
         var activeRequests = this.activeRequests;
-        var privateComplete = function (request) {
+        var privateComplete = function (request, status) {
             delete activeRequests[type];
+            if (completeFunction != null) completeFunction(request, status);
         };
-        params['complete'] = function (request, status) {privateComplete(request); if (completeFunction != null) completeFunction(request, status)};
+        params['complete'] = privateComplete;
 
         this.activeRequests[type] = $.ajax(params);
     }
 
     abortActiveRequest (type) {
         if (this.activeRequests.hasOwnProperty(type)) {
-            var request = this.activeRequests[type];
-            request.abort();
+            this.activeRequests[type].abort();
             delete this.activeRequests[type];
         }
     }
