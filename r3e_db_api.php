@@ -12,13 +12,13 @@ else if(isset($_GET['carId'])) {
 }
 
 function getClasses () {
-    require "auth.php";
+    require_once "auth.php";
 
     $db = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
     if ($db->connect_error)
         die("Connection failed: " . $db->connect_error);
 
-    $db->query("USE r3e_data");
+    $db->query("USE {$dbName}");
 
     $result = $db->query("SELECT * from classes ORDER BY name");
 
@@ -35,13 +35,13 @@ function getClasses () {
 }
 
 function getCars($classId){
-    require "auth.php";
+    require_once "auth.php";
     
     $db = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
     if ($db->connect_error)
         die("Connection failed: " . $db->connect_error);
     
-    $db->query("USE r3e_data");
+    $db->query("USE {$dbName}");
     
     $result = $db->query("SELECT * from cars WHERE classId = {$classId} ORDER BY name");
     
@@ -58,12 +58,12 @@ function getCars($classId){
 }
 
 function getLiveries($carId, $username){
-    require "auth.php";
+    require_once "auth.php";
     $db = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
     if ($db->connect_error)
         die("Connection failed: " . $db->connect_error);
     
-    $db->query("USE r3e_data");
+    $db->query("USE {$dbName}");
     
     $userResult = $username == null ? false : $db->query("SELECT * FROM users WHERE name='{$username}';");
     if($userResult != null && $userResult->num_rows == 1)

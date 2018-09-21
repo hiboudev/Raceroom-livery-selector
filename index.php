@@ -70,7 +70,6 @@
                 }
 
                 window.onpopstate = handleHistoryChange;
-                // history.pushState({ foo: 'fake' }, 'Fake Url', 'hy, this is a fake url.html');
             }
 
             function handleHistoryChange(event){

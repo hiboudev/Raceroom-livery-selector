@@ -79,9 +79,9 @@ function downloadUserProfile ($username) {
 }
 
 function getDatabaseConnection () {
-    require "auth.php";
+    require_once "auth.php";
     $connection = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
-    $connection->query("USE r3e_data;");
+    $connection->query("USE {$dbName};");
 
     return $connection;
 }

@@ -1,5 +1,7 @@
 <?php
 
+require_once "../auth.php";
+
 function write($text) {
     echo $text."<br />";
 }
@@ -26,7 +28,6 @@ $json = json_decode($fileContent, true);
 mysqli_report(MYSQLI_REPORT_STRICT);
 
 try {
-    require "../auth.php";
     $db = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
 } catch (Exception $e ) {
     var_dump($e);
@@ -35,8 +36,6 @@ try {
 
 if ($db->connect_error)
     die("Connection failed: " . $db->connect_error);
-
-$dbName = "r3e_data";
 
 if(!databaseExists($db, $dbName)) {
     createDatabase($db, $dbName);

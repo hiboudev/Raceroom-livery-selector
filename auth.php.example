@@ -1,15 +1,17 @@
 <?php
 
-$PRODUCTION = false;
+require_once 'prod/prod.php';
 
-if ($PRODUCTION) {
+if (PRODUCTION) {
+    $dbName = "mydbname";
     $dbAddress = "127.0.0.1";
-    $dbUserName = "yourusername";
-    $dbPassword = "yourpassword";
+    $dbUserName = "myusername";
+    $dbPassword = "mypassword";
 } else {
+    $dbName = "mydbname";
     $dbAddress = "127.0.0.1";
-    $dbUserName = "yourusername";
-    $dbPassword = "yourpassword";
+    $dbUserName = "myusername";
+    $dbPassword = "mypassword";
 }
 
 ?>
