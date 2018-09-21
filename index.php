@@ -11,7 +11,7 @@
         <script src="jquery.blockUI.min.js"></script>
         <script src="letsCook.js"></script>
         <script src="urlTools.js"></script>
-        <script src="AjaxManager.js"></script>
+        <script src="ajaxManager.js"></script>
 
         <style>
             html {font-family: sans-serif; font-size: 90% }
