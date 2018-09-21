@@ -11,6 +11,7 @@
         <script src="jquery.blockUI.min.js"></script>
         <script src="letsCook.js"></script>
         <script src="urlTools.js"></script>
+        <script src="AjaxManager.js"></script>
 
         <style>
             html {font-family: sans-serif; font-size: 90% }
@@ -55,9 +56,10 @@
             // alert('username: '+Cookie.getValue('username'));
             // Cookie.setValue('username', 'gfdgdfgoo');
 
-            timeoutId = -1;
-            synchronizingProfile = false;
-            globalUsername = null;
+            var timeoutId = -1;
+            var synchronizingProfile = false;
+            var globalUsername = null;
+            var ajaxManager = new AjaxManager();
 
             function onPageLoaded() {
                 var username = Cookie.getValue('username');
@@ -121,15 +123,17 @@
                 $("#thumbnailContainer").empty();
                 $("#carSelector").empty();
 
-                $.ajax({
-                    type: "GET",
-                    url: "r3e_db_api.php",
-                    data: "getData&classId=" + classId,
-                    success: function(result) {
-                        $("#carSelector").html(result);
-                        if(handler != null) handler();
-                    }
-                });
+                ajaxManager.executeAjax(    RequestType.GET_CARS,
+                                            {
+                                                type: "GET",
+                                                url: "r3e_db_api.php",
+                                                data: "getData&classId=" + classId,
+                                                success: function(result) {
+                                                    $("#carSelector").html(result);
+                                                    if(handler != null) handler();
+                                                }
+                                            }
+                                        );
             };
 
             function carSelected(carId) {
@@ -142,14 +146,16 @@
                 if(carId < 0) return;
                 $("#thumbnailContainer").empty();
                 
-                $.ajax({
-                    type: "GET",
-                    url: "r3e_db_api.php",
-                    data: "getData&carId=" + carId + "&username=" + globalUsername,
-                    success: function(result) {
-                        $("#thumbnailContainer").html(result);
-                    }
-                });
+                ajaxManager.executeAjax(    RequestType.GET_LIVERIES,
+                                            {
+                                                type: "GET",
+                                                url: "r3e_db_api.php",
+                                                data: "getData&carId=" + carId + "&username=" + globalUsername,
+                                                success: function(result) {
+                                                    $("#thumbnailContainer").html(result);
+                                                }
+                                            }
+                                        );
             }
 
             function copyLink(link) {
@@ -180,36 +186,37 @@
                 
                 var syncTriggered = false;
 
-                $.ajax({
-                    type: "GET",
-                    url: "user_profile_api.php",
-                    data: "checkUsername=" + username,
-                    success: function(result) {
-                        synchronizingProfile = false;
-                        $.unblockUI();
+                ajaxManager.executeAjax(    RequestType.PROFILE_CHECK,
+                                            {
+                                                type: "GET",
+                                                url: "user_profile_api.php",
+                                                data: "checkUsername=" + username,
+                                                success: function(result) {
+                                                    synchronizingProfile = false;
+                                                    $.unblockUI();
 
-                        switch(result) {
-                            case '0':
-                                setUsername(username);
-                            break;
-                            case '1':
-                                syncTriggered = true;
-                                // Doesn't exists in our DB so create profile.
-                                synchronizeProfile(username, handler);
-                        }
-                    },
-                    error: function (a, b, c) {
-                        alert("Une erreur est survenue.");
-                        setUsername("");
-                    },
-                    complete: function () {
-                        if(!syncTriggered){
-                            initializeLoginBox();
-                            if (handler != null) handler();
-                        }
-                        
-                    }
-                });
+                                                    switch(result) {
+                                                        case '0':
+                                                            setUsername(username);
+                                                        break;
+                                                        case '1':
+                                                            syncTriggered = true;
+                                                            // Doesn't exists in our DB so create profile.
+                                                            synchronizeProfile(username, handler);
+                                                    }
+                                                },
+                                                error: function (a, b, c) {
+                                                    alert("Une erreur est survenue.");
+                                                    setUsername("");
+                                                },
+                                                complete: function (request, status) {
+                                                    if(!syncTriggered){
+                                                        initializeLoginBox();
+                                                        if (handler != null) handler();
+                                                    }
+                                                }
+                                            }
+                                        );
             }
             
             function loginClicked(event) {
@@ -231,36 +238,38 @@
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
                 
-                $.ajax({
-                    type: "GET",
-                    url: "user_profile_api.php",
-                    data: "username=" + username,
-                    success: function(result) {
-                        switch (result) {
-                            case '1':
-                                alert("L'utilisateur '"+username+"' n'a pas été trouvé sur la boutique Raceroom.");
-                                setUsername("");
-                                break;
-                            case '2':
-                            case '3':
-                                alert("Une erreur code '"+result+"' s'est produite.");
-                                setUsername("");
-                                break;
-                            default:
-                                setUsername(result);
-                        }
-                    },
-                    error: function (a, b, c) {
-                        alert("Une erreur est survenue.");
-                        setUsername("");
-                    },
-                    complete: function () {
-                        synchronizingProfile = false;
-                        $.unblockUI();
-                        initializeLoginBox();
-                        if (handler != null) handler();
-                    }
-                });
+                ajaxManager.executeAjax(    RequestType.PROFILE_SYNC,
+                                            {
+                                                type: "GET",
+                                                url: "user_profile_api.php",
+                                                data: "username=" + username,
+                                                success: function(result) {
+                                                    switch (result) {
+                                                        case '1':
+                                                            alert("L'utilisateur '"+username+"' n'a pas été trouvé sur la boutique Raceroom.");
+                                                            setUsername("");
+                                                            break;
+                                                        case '2':
+                                                        case '3':
+                                                            alert("Une erreur code '"+result+"' s'est produite.");
+                                                            setUsername("");
+                                                            break;
+                                                        default:
+                                                            setUsername(result);
+                                                    }
+                                                },
+                                                error: function (a, b, c) {
+                                                    alert("Une erreur est survenue.");
+                                                    setUsername("");
+                                                },
+                                                complete: function () {
+                                                    synchronizingProfile = false;
+                                                    $.unblockUI();
+                                                    initializeLoginBox();
+                                                    if (handler != null) handler();
+                                                }
+                                            }
+                                        );
             }
 
             function setUsername (_username, updateCookie=true) {
