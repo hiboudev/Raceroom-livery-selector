@@ -68,6 +68,8 @@
             var ajaxManager = new AjaxManager();
 
             function onPageLoaded() {
+                window.onbeforeunload = cleanBeforeExit;
+
                 var username = Cookie.getValue('username');
                 if(username != null && username != '')
                     checkProfile(username, displayUrlData);
@@ -78,6 +80,10 @@
                 }
 
                 window.onpopstate = handleHistoryChange;
+            }
+
+            function cleanBeforeExit() {
+                ajaxManager.abortAll();
             }
 
             function handleHistoryChange(event){
@@ -220,7 +226,7 @@
                                                 },
                                                 error: function (a, b, c) {
                                                     alert("Une erreur est survenue.");
-                                                    setUsername("");
+                                                    // setUsername("");
                                                 },
                                                 complete: function (request, status) {
                                                     if(!syncTriggered){
@@ -260,12 +266,12 @@
                                                     switch (result) {
                                                         case '1':
                                                             alert("L'utilisateur '"+username+"' n'a pas été trouvé sur la boutique Raceroom.");
-                                                            setUsername("");
+                                                            // setUsername("");
                                                             break;
                                                         case '2':
                                                         case '3':
                                                             alert("Une erreur code '"+result+"' s'est produite.");
-                                                            setUsername("");
+                                                            // setUsername("");
                                                             break;
                                                         default:
                                                             setUsername(result);
@@ -273,7 +279,7 @@
                                                 },
                                                 error: function (a, b, c) {
                                                     alert("Une erreur est survenue.");
-                                                    setUsername("");
+                                                    // setUsername("");
                                                 },
                                                 complete: function () {
                                                     synchronizingProfile = false;

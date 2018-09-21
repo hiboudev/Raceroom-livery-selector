@@ -5,7 +5,7 @@ class AjaxManager {
     }
 
     executeAjax (type, params) {
-        this.clearActiveRequest(type);
+        this.abortActiveRequest(type);
 
         var completeFunction = params['complete'];
         var activeRequests = this.activeRequests;
@@ -17,12 +17,17 @@ class AjaxManager {
         this.activeRequests[type] = $.ajax(params);
     }
 
-    clearActiveRequest (type) {
+    abortActiveRequest (type) {
         if (this.activeRequests.hasOwnProperty(type)) {
             var request = this.activeRequests[type];
             request.abort();
             delete this.activeRequests[type];
         }
+    }
+
+    abortAll () {
+        for(var type in this.activeRequests)
+            this.abortActiveRequest(type);
     }
 }
 
