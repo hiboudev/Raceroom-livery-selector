@@ -58,10 +58,6 @@
         </style>
 
         <script>
-
-            // alert('username: '+Cookie.getValue('username'));
-            // Cookie.setValue('username', 'gfdgdfgoo');
-
             var timeoutId = -1;
             var synchronizingProfile = false;
             var globalUsername = null;
@@ -91,19 +87,28 @@
                 displayUrlData();
             }
 
-            function displayUrlData() { // TODO ça fait quoi si on met n'imp dans l'url ?
-                var carId = getUrlParam("carId");
-                var classId = getUrlParam("classId");
+            function displayUrlData() {
+                var carId = Number(getUrlParam("carId"));
+                var classId = Number(getUrlParam("classId"));
+                // TODO if isNaN, clear param
 
-                if(classId != null) {
-                    $('#carClassSelector').val(classId);
+                if(!isNaN(classId)) {
+                    selectIfExists('carClassSelector', classId);
                     
-                    if(carId != null) {
-                        getCars(classId, function(){$('#carSelector').val(carId)});
+                    if(!isNaN(carId)) {
+                        getCars(classId, function(){selectIfExists('carSelector', carId);});
                         getLiveries(carId);
                     }
                     else getCars(classId, function(){$('#carSelector').val(-1)});
                 }
+            }
+
+            function selectIfExists (selector, optionValue) {
+                var optionExists = false;
+                $("#"+selector+" > option").each(function() {
+                    if (this.value == optionValue) optionExists = true;
+                });
+                $("#"+selector).val(optionExists ? optionValue : -1);
             }
 
             function forgetProfile() {
@@ -149,6 +154,7 @@
                                                 data: "getData&classId=" + classId,
                                                 success: function(result) {
                                                     $("#carSelector").html(result);
+                                                    // $("#carSelector").val(-1);
                                                     if(handler != null) handler();
                                                 }
                                             }
