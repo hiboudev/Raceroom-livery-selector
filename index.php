@@ -9,14 +9,15 @@
         <?php include("r3e_db_api.php"); ?>
         <script src="jquery-3.3.1.min.js"></script>
         <script src="jquery.blockUI.min.js"></script>
-        <script src="letscook.js"></script>
+        <script src="letsCook.js"></script>
+        <script src="urlTools.js"></script>
 
         <style>
             html {font-family: sans-serif; font-size: 90% }
             body {margin: 0px;}
 
             .header {box-sizing: border-box; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
-            .homeImage {width:20px; height:20px; float:left;margin-right:8px}
+            .homeImage {width:20px; height:20px; float:left; margin-right:8px; margin-top:7px}
             select {width: 300px; margin: 1px}
             .listPrompt {font-style: italic; color: #999;}
             .headerRightBox {float: right}
@@ -35,7 +36,7 @@
             .splash {position: relative; top: 20px; text-align: center; color:#444}
             .tip {}
 
-            .loginBox {display: none; margin-top: 50px}
+            .loginBox {display: none; margin-top: 50px; background-color:#f4f4f4; padding:4px}
             .loggedPrompt {margin-right:10px}
             .subLoginBox {margin-top: 10px}
             .loginForm {display: none}
@@ -61,10 +62,34 @@
             function onPageLoaded() {
                 var username = Cookie.getValue('username');
                 if(username != null && username != '')
-                    checkProfile(username);
+                    checkProfile(username, displayUrlData);
                 else {
                     setUsername('');
                     initializeLoginBox();
+                    displayUrlData();
+                }
+
+                window.onpopstate = handleHistoryChange;
+                // history.pushState({ foo: 'fake' }, 'Fake Url', 'hy, this is a fake url.html');
+            }
+
+            function handleHistoryChange(event){
+                event.preventDefault();
+                displayUrlData();
+            }
+
+            function displayUrlData() { // TODO ça fait quoi si on met n'imp dans l'url ?
+                var carId = getUrlParam("carId");
+                var classId = getUrlParam("classId");
+
+                if(classId != null) {
+                    $('#carClassSelector').val(classId);
+                    
+                    if(carId != null) {
+                        getCars(classId, function(){$('#carSelector').val(carId)});
+                        getLiveries(carId);
+                    }
+                    else getCars(classId, function(){$('#carSelector').val(-1)});
                 }
             }
 
@@ -92,7 +117,7 @@
                 }
             }
 
-            function getCars(classId) {
+            function getCars(classId, handler=null) {
                 if(classId < 0) return;
                 $("#thumbnailContainer").empty();
                 $("#carSelector").empty();
@@ -100,12 +125,19 @@
                 $.ajax({
                     type: "GET",
                     url: "r3e_db_api.php",
-                    data: "classId=" + classId,
+                    data: "getData&classId=" + classId,
                     success: function(result) {
                         $("#carSelector").html(result);
+                        if(handler != null) handler();
                     }
                 });
             };
+
+            function carSelected(carId) {
+                var classId = $('#carClassSelector').val();
+                history.pushState({ 'carId': carId }, '', '?classId='+classId+'&carId='+carId);
+                getLiveries(carId);
+            }
 
             function getLiveries(carId) {
                 if(carId < 0) return;
@@ -114,7 +146,7 @@
                 $.ajax({
                     type: "GET",
                     url: "r3e_db_api.php",
-                    data: "carId=" + carId + "&username=" + globalUsername,
+                    data: "getData&carId=" + carId + "&username=" + globalUsername,
                     success: function(result) {
                         $("#thumbnailContainer").html(result);
                     }
@@ -141,13 +173,13 @@
                 $('#notification').css('display', 'none');
             }
 
-            function checkProfile(username) {
+            function checkProfile(username, handler=null) {
                 $.blockUI({ message: '<h1>Vérification du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
                 
-                var initLoginBox = true;
+                var syncTriggered = false;
 
                 $.ajax({
                     type: "GET",
@@ -162,9 +194,9 @@
                                 setUsername(username);
                             break;
                             case '1':
-                                initLoginBox = false;
+                                syncTriggered = true;
                                 // Doesn't exists in our DB so create profile.
-                                synchronizeProfile(username);
+                                synchronizeProfile(username, handler);
                         }
                     },
                     error: function (a, b, c) {
@@ -172,7 +204,11 @@
                         setUsername("");
                     },
                     complete: function () {
-                        if(initLoginBox) initializeLoginBox();
+                        if(!syncTriggered){
+                            initializeLoginBox();
+                            if (handler != null) handler();
+                        }
+                        
                     }
                 });
             }
@@ -190,7 +226,7 @@
                     synchronizeProfile(globalUsername);
             }
 
-            function synchronizeProfile(username) {
+            function synchronizeProfile(username, handler) {
                 $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 if(synchronizingProfile) return;
@@ -223,6 +259,7 @@
                         synchronizingProfile = false;
                         $.unblockUI();
                         initializeLoginBox();
+                        if (handler != null) handler();
                     }
                 });
             }
@@ -252,10 +289,10 @@
             <span id="notification" class="notification">Lien copié dans le presse-papier !</span>
             
             <a href="."><img class="homeImage" src="images/home.png"/></a>
-            <select name="carClassSelector" onChange="getCars(this.value)">
+            <select id="carClassSelector" onChange="getCars(this.value)">
                 <?php getClasses(); ?>
             </select>
-            <select id="carSelector" onChange="getLiveries(this.value)"></select>
+            <select id="carSelector" onChange="carSelected(this.value)"></select>
         </div>
 
         <div id="thumbnailContainer">

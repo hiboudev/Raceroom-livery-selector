@@ -1,5 +1,7 @@
 <?php
 
+if(!isset($_GET['getData'])) return;
+
 if(isset($_GET['classId']))
     getCars($_GET['classId']);
 else if(isset($_GET['carId'])) {

@@ -32,6 +32,7 @@ function synchronizeUserProfile ($username) {
     $userId = checkUserExists($connection, $username);
 
     $connection->query("DELETE FROM userLiveries WHERE userId = $userId;");
+    $connection->query("DELETE FROM userCars WHERE userId = $userId;");
     
     // TODO Moyen d'optimiser en une seule boucle ?
     foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue)
