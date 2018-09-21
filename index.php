@@ -44,11 +44,12 @@
             .openLoginFormLink {display:none; font-size:90%}
             .resyncButton {display:inline-block}
             .resyncTip {font-size:90%; font-style:italic; margin-top:6px; color:#666; }
+            .forgetProfile {font-size:80%; display:block; margin-top:8px; display: none;}
 
             .profileHelpLink {display:block; margin-top: 40px; font-size:90%}
             .profileHelp {display:none; margin-top: 40px}
             
-            .profileHelp img {margin: 10px 30px; border: 4px solid #ddd}
+            .profileHelp img {margin: 10px 30px; border: 4px solid #ddd;}
         </style>
 
         <script>
@@ -94,6 +95,11 @@
                 }
             }
 
+            function forgetProfile() {
+                setUsername("");
+                initializeLoginBox();
+            }
+
             function openLoginFormClicked() {
                 $('#openLoginFormLink').css("display", "none");
                 $('#loginForm').css("display", "block");
@@ -110,11 +116,13 @@
                     $('#openLoginFormLink').css("display", "block");
                     $('#loginForm').css("display", "none");
                     $('#profileField').val("");
+                    $('.forgetProfile').css("display", "block");
                 } else {
                     $('#loggedPrompt').html("Profil :");
                     $('#resyncButton').css("display", "none");
                     $('.resyncTip').css("display", "none");
                     $('#loginForm').css("display", "block");
+                    $('.forgetProfile').css("display", "none");
                 }
             }
 
@@ -318,6 +326,7 @@
                                 <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
                                 <button type="submit">Valider</button>
                             </form>
+                            <a href="#" class="forgetProfile" onClick="forgetProfile()">N'utilisez aucun profil</a>
                             <a href="#" class="profileHelpLink" onClick="showProfileHelp()">Comment obtenir votre nom de profil ?</a>
                             <div class="profileHelp">
                                 <p>Rendez-vous sur le <a href="http://game.raceroom.com/store/">magasin Raceroom</a>, identifiez-vous puis ouvrez les paramètres de compte :</p>

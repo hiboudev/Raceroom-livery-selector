@@ -1,7 +1,4 @@
 * Click sur "aucun profil utilisé" -> affiche le splash. Idem quand l'url n'a pas de GET utilisables.
-* Comment ça se passe s'il ya du lag et qu'on lance tout un tas de requêtes ? => https://stackoverflow.com/questions/446594/abort-ajax-requests-using-jquery
-* utiliser les classId de S3S
-* pouvoir supprimer le profil du cookie
 * Sur le "?", ajouter tooltip explicatif et click->lien boutique.
 * Pas d'affichage des voitures qui ne sont plus au magasin, comme la RUF. Elle est quand même listée dans les purchases, voir si on peut en faire quelque chose, éventuellement en réutilisant r3e_data.json.
 * Le magasin ne nous dit pas si on possède la livrée par défaut d'une voiture.
