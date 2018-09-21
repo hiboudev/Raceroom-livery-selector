@@ -47,12 +47,14 @@ function getCars($classId){
     
     $all = $result->fetch_all(MYSQLI_ASSOC);
     
-    echo "<option class=\"listPrompt\" value=\"-1\">Choisissez une voiture...</option>";
+    if (count($all) > 0) {
+        echo "<option class=\"listPrompt\" value=\"-1\">Choisissez une voiture...</option>";
 
-    for ($i=0; $i < count($all); $i++) {
-        $row = $all[$i];
-        echo "<option value=\"{$row["id"]}\">{$row["name"]}</option>";
-    }
+        for ($i=0; $i < count($all); $i++) {
+            $row = $all[$i];
+            echo "<option value=\"{$row["id"]}\">{$row["name"]}</option>";
+        }
+    } else echo "";
     
     $db->close();
 }

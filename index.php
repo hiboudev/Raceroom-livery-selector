@@ -88,19 +88,20 @@
             }
 
             function displayUrlData() {
-                var carId = Number(getUrlParam("carId"));
-                var classId = Number(getUrlParam("classId"));
+                var carId = getUrlParam("carId");
+                var classId = getUrlParam("classId");
+
+                if(classId == null || isNaN(Number(classId))) return;
+                if(carId == null || isNaN(Number(carId))) carId = null;
                 // TODO if isNaN, clear param
 
-                if(!isNaN(classId)) {
-                    selectIfExists('carClassSelector', classId);
+                selectIfExists('carClassSelector', classId);
                     
-                    if(!isNaN(carId)) {
-                        getCars(classId, function(){selectIfExists('carSelector', carId);});
-                        getLiveries(carId);
-                    }
-                    else getCars(classId, function(){$('#carSelector').val(-1)});
+                if(carId != null) {
+                    getCars(classId, function(){selectIfExists('carSelector', carId);});
+                    getLiveries(carId);
                 }
+                else getCars(classId, function(){$('#carSelector').val(-1)});
             }
 
             function selectIfExists (selector, optionValue) {
