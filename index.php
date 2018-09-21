@@ -21,9 +21,11 @@
             .homeImage {width:20px; height:20px; float:left; margin-right:8px; margin-top:7px}
             select {width: 300px; margin: 1px}
             .listPrompt {font-style: italic; color: #999;}
-            .headerRightBox {float: right}
-            .username {text-align:right; font-size:80%}
-            .notification {background-color: #666; font-weight: bold; color:#ddd; position: absolute; right: 0; top:1.3em;padding: 3px; display: none}
+            .headerRightBox {float: right;}
+            .usernameContainer {text-align:right;}
+            .username {font-size:80%; text-decoration:none; color: #666; margin-bottom:2px}
+            .username:hover {text-decoration:underline; color: #7070d4}
+            .notification {background-color: #666; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
 
             .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-color: #f2f2f2; margin: 2px 2px;}
             .thumbnail:hover {background-color: #fff;}
@@ -41,12 +43,15 @@
             .loggedPrompt {margin-right:10px}
             .subLoginBox {margin-top: 10px}
             .loginForm {display: none}
-            .openLoginFormLink {display:none; font-size:90%}
+            .openLoginFormLinkContainer {display:none}
+            .openLoginFormLink {font-size:90%}
             .resyncButton {display:inline-block}
             .resyncTip {font-size:90%; font-style:italic; margin-top:6px; color:#666; }
-            .forgetProfile {font-size:80%; display:block; margin-top:8px; display: none;}
+            .forgetProfileContainer {margin-top:8px; display: none;}
+            .forgetProfile {font-size:80%;}
 
-            .profileHelpLink {display:block; margin-top: 40px; font-size:90%}
+            .profileHelpLinkContainer {margin-top: 40px}
+            .profileHelpLink {font-size:90%}
             .profileHelp {display:none; margin-top: 40px}
             
             .profileHelp img {margin: 10px 30px; border: 4px solid #ddd;}
@@ -101,7 +106,7 @@
             }
 
             function openLoginFormClicked() {
-                $('#openLoginFormLink').css("display", "none");
+                $('.openLoginFormLinkContainer').css("display", "none");
                 $('#loginForm').css("display", "block");
                 $('#profileField').focus();
             }
@@ -113,16 +118,16 @@
                     $('#loggedPrompt').html("Profil : <b>"+globalUsername+"</b>");
                     $('#resyncButton').css("display", "inline-block");
                     $('.resyncTip').css("display", "block");
-                    $('#openLoginFormLink').css("display", "block");
+                    $('.openLoginFormLinkContainer').css("display", "block");
                     $('#loginForm').css("display", "none");
                     $('#profileField').val("");
-                    $('.forgetProfile').css("display", "block");
+                    $('.forgetProfileContainer').css("display", "block");
                 } else {
                     $('#loggedPrompt').html("Profil :");
                     $('#resyncButton').css("display", "none");
                     $('.resyncTip').css("display", "none");
                     $('#loginForm').css("display", "block");
-                    $('.forgetProfile').css("display", "none");
+                    $('.forgetProfileContainer').css("display", "none");
                 }
             }
 
@@ -299,7 +304,7 @@
 
         <div class="header">
             <div class="headerRightBox">
-                <div id="usernameField" class="username">...</div>
+                <div class="usernameContainer"><a id="usernameField" class="username" href=".">...</a></div>
                 <input id="linkField" type="text" readonly />
             </div>
             <span id="notification" class="notification">Lien copié dans le presse-papier !</span>
@@ -320,14 +325,14 @@
                     <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>
                     <div class="resyncTip">Resynchronisez votre profil si vous avez acheté de nouvelles livrées depuis votre dernière visite.</div>
                     <div class="subLoginBox">
-                        <a id="openLoginFormLink" class="openLoginFormLink" onClick="openLoginFormClicked()" href="#">Changer de profil</a>
+                        <div class="openLoginFormLinkContainer"><a class="openLoginFormLink" onClick="openLoginFormClicked()" href="#">Changer de profil</a></div>
                         <div id="loginForm" class="loginForm">
                             <form onSubmit="loginClicked(event)">
                                 <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
                                 <button type="submit">Valider</button>
                             </form>
-                            <a href="#" class="forgetProfile" onClick="forgetProfile()">N'utilisez aucun profil</a>
-                            <a href="#" class="profileHelpLink" onClick="showProfileHelp()">Comment obtenir votre nom de profil ?</a>
+                            <div class="forgetProfileContainer"><a href="#" class="forgetProfile" onClick="forgetProfile()">N'utilisez aucun profil</a></div>
+                            <div class="profileHelpLinkContainer"><a href="#" class="profileHelpLink" onClick="showProfileHelp()">Comment obtenir votre nom de profil ?</a></div>
                             <div class="profileHelp">
                                 <p>Rendez-vous sur le <a href="http://game.raceroom.com/store/">magasin Raceroom</a>, identifiez-vous puis ouvrez les paramètres de compte :</p>
                                 <img src="images/profileHelp1.png" />
