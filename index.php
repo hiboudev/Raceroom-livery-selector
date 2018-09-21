@@ -91,11 +91,12 @@
                 var carId = getUrlParam("carId");
                 var classId = getUrlParam("classId");
 
-                if(classId == null || isNaN(Number(classId))) return;
+                if(classId == null || isNaN(Number(classId))) classId = null;
                 if(carId == null || isNaN(Number(carId))) carId = null;
                 // TODO if isNaN, clear param
-
-                selectIfExists('carClassSelector', classId);
+                
+                if(classId != null)
+                    selectIfExists('carClassSelector', classId);
                     
                 if(carId != null) {
                     getCars(classId, function(){selectIfExists('carSelector', carId);});
