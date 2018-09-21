@@ -2,16 +2,28 @@
 
 require_once 'prod/prod.php';
 
-if (PRODUCTION) {
-    $dbName = "mydbname";
-    $dbAddress = "127.0.0.1";
-    $dbUserName = "myusername";
-    $dbPassword = "mypassword";
-} else {
-    $dbName = "mydbname";
-    $dbAddress = "127.0.0.1";
-    $dbUserName = "myusername";
-    $dbPassword = "mypassword";
+switch (EXEC_ENV) {
+
+    case OFFLINE_DEV:
+        $dbName = "mydbname";
+        $dbAddress = "127.0.0.1";
+        $dbUserName = "root";
+        $dbPassword = "";
+        break;
+
+    case ONLINE_DEV:
+        $dbName = "mydbname";
+        $dbAddress = "127.0.0.1";
+        $dbUserName = "myusername";
+        $dbPassword = "mypassword";
+        break;
+
+    case PRODUCTION:
+        $dbName = "mydbname";
+        $dbAddress = "127.0.0.1";
+        $dbUserName = "myusername";
+        $dbPassword = "mypassword";
+        break;
 }
 
 ?>
