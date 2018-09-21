@@ -35,18 +35,18 @@
             .splash {position: relative; top: 20px; text-align: center; color:#444}
             .tip {}
 
-            .loggedPrompt {margin-right:10px}
             .loginBox {display: none; margin-top: 50px}
-            .subLoginBox {margin-top: 20px}
+            .loggedPrompt {margin-right:10px}
+            .subLoginBox {margin-top: 10px}
             .loginForm {display: none}
             .openLoginFormLink {display:none; font-size:90%}
             .resyncButton {display:inline-block}
             .resyncTip {font-size:90%; font-style:italic; margin-top:6px; color:#666; }
 
             .profileHelpLink {display:block; margin-top: 40px; font-size:90%}
-            .profileHelp {display:none;margin-top: 40px}
+            .profileHelp {display:none; margin-top: 40px}
             
-            .profileHelp img {margin: 30px;}
+            .profileHelp img {margin: 10px 30px; border: 4px solid #ddd}
         </style>
 
         <script>
@@ -60,11 +60,12 @@
 
             function onPageLoaded() {
                 var username = Cookie.getValue('username');
-
                 if(username != null && username != '')
                     checkProfile(username);
-                else
+                else {
+                    setUsername('');
                     initializeLoginBox();
+                }
             }
 
             function openLoginFormClicked() {
@@ -226,8 +227,8 @@
                 });
             }
 
-            function setUsername (_username) {
-                Cookie.setValue('username', _username);
+            function setUsername (_username, updateCookie=true) {
+                if (updateCookie) Cookie.setValue('username', _username);
                 globalUsername = _username;
                 var loginText = _username == "" ? "Aucun profil utilisé" : _username;
                 $('#usernameField').html(loginText);
@@ -245,7 +246,7 @@
 
         <div class="header">
             <div class="headerRightBox">
-                <div id="usernameField" class="username"></div>
+                <div id="usernameField" class="username">...</div>
                 <input id="linkField" type="text" readonly />
             </div>
             <span id="notification" class="notification">Lien copié dans le presse-papier !</span>
@@ -264,7 +265,7 @@
                 <div id="loginBox" class="loginBox">
                     <span id="loggedPrompt" class="loggedPrompt"></span>
                     <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>
-                    <div class="resyncTip">Resynchronisez votre profil si vous avez fait des achats depuis votre dernière visite.</div>
+                    <div class="resyncTip">Resynchronisez votre profil si vous avez acheté de nouvelles livrées depuis votre dernière visite.</div>
                     <div class="subLoginBox">
                         <a id="openLoginFormLink" class="openLoginFormLink" onClick="openLoginFormClicked()" href="#">Changer de profil</a>
                         <div id="loginForm" class="loginForm">
