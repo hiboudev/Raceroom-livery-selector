@@ -39,6 +39,11 @@
             .loginForm {display: none}
             .openLoginFormLink {display: none;}
             .resyncButton {display:inline-block}
+
+            .profileHelpLink {display:block; margin-top: 40px}
+            .profileHelp {display:none;margin-top: 40px}
+            
+            .profileHelp img {margin: 30px;}
         </style>
 
         <script>
@@ -62,6 +67,7 @@
             function openLoginFormClicked() {
                 $('#openLoginFormLink').css("display", "none");
                 $('#loginForm').css("display", "block");
+                $('#profileField').focus();
             }
 
             function initializeLoginBox() {
@@ -167,7 +173,7 @@
             
             function loginClicked(event) {
                 event.preventDefault();
-                
+
                 var username = $("#profileField").val();
                 if(username != "" && username != null)
                     checkProfile(username);
@@ -220,7 +226,12 @@
                 globalUsername = _username;
                 $('#usernameField').text(_username);
             }
-    
+            
+            function showProfileHelp() {
+                $('.profileHelp').css('display', 'block');
+                $('.profileHelpLink').css('display', 'none');
+            }
+
         </script>
     </head>
 
@@ -247,10 +258,18 @@
                     <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>
                     <div class="subLoginBox">
                         <a id="openLoginFormLink" class="openLoginFormLink" onClick="openLoginFormClicked()" href="#">Changer de profil</a>
-                        <form id="loginForm" class="loginForm" onSubmit="loginClicked(event)">
-                            <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
-                            <button type="submit">Valider</button>
-                        </form>
+                        <div id="loginForm" class="loginForm">
+                            <form onSubmit="loginClicked(event)">
+                                <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
+                                <button type="submit">Valider</button>
+                            </form>
+                            <a href="#" class="profileHelpLink" onClick="showProfileHelp()">Comment obtenir votre nom de profil ?</a>
+                            <div class="profileHelp">
+                                <p>Rendez-vous sur le <a href="http://game.raceroom.com/store/">magasin Raceroom</a>, identifiez-vous puis ouvrez les paramètres de compte :</p>
+                                <img src="images/profileHelp1.png" />
+                                <img src="images/profileHelp2.png" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,3 @@
 * Sur le "?", ajouter tooltip explicatif et click->lien boutique.
 * Pas d'affichage des voitures qui ne sont plus au magasin, comme la RUF. Elle est quand même listée dans les purchases, voir si on peut en faire quelque chose, éventuellement en réutilisant r3e_data.json.
-* Pas possible de déterminer si on possède la livrée par défaut d'une voiture, sauf par déduction si on a une voiture avec aucune livrée.
-  => voir si, en étant connecté au magasin, on peut faire une requête ajax pour récupérer les infos sur les livrées par défaut.
+* Le magasin ne nous dit pas si on possède la livrée par défaut d'une voiture.
