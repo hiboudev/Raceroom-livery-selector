@@ -7,3 +7,7 @@ function getUrlParam(name){
        return decodeURI(results[1]) || 0;
     }
 }
+
+function urlParamExists(name) {
+    return new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href) != null;
+}

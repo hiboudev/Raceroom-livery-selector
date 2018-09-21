@@ -88,6 +88,9 @@
             }
 
             function displayUrlData() {
+                if (!urlParamExists("carId") && !urlParamExists("classId"))
+                    return;
+                
                 var carId = getUrlParam("carId");
                 var classId = getUrlParam("classId");
 
