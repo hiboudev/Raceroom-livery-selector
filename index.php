@@ -53,7 +53,6 @@
             .profileHelpLinkContainer {margin-top: 40px}
             .profileHelpLink {font-size:90%}
             .profileHelp {display:none; margin-top: 40px}
-            
             .profileHelp img {margin: 10px 30px; border: 4px solid #ddd;}
         </style>
 
@@ -93,8 +92,8 @@
                 var carId = getUrlParam("carId");
                 var classId = getUrlParam("classId");
 
-                if(classId == null || isNaN(Number(classId))) classId = null;
-                if(carId == null || isNaN(Number(carId))) carId = null;
+                if(isNaN(Number(classId))) classId = null;
+                if(isNaN(Number(carId))) carId = null;
                 // TODO if isNaN, clear param
                 
                 if(classId != null)
@@ -110,7 +109,10 @@
             function selectIfExists (selector, optionValue) {
                 var optionExists = false;
                 $("#"+selector+" > option").each(function() {
-                    if (this.value == optionValue) optionExists = true;
+                    if (this.value == optionValue) {
+                        optionExists = true;
+                        return false;
+                    }
                 });
                 $("#"+selector).val(optionExists ? optionValue : -1);
             }
@@ -158,7 +160,6 @@
                                                 data: "getData&classId=" + classId,
                                                 success: function(result) {
                                                     $("#carSelector").html(result);
-                                                    // $("#carSelector").val(-1);
                                                     if(handler != null) handler();
                                                 }
                                             }
@@ -167,9 +168,9 @@
 
             function carSelected(carId) {
                 var classId = $('#carClassSelector').val();
-                if (carId < 1 || classId < 1) return;
+                if (carId < 0 || classId < 0) return;
 
-                history.pushState({ 'carId': carId }, '', '?classId='+classId+'&carId='+carId);
+                history.pushState({'carId': carId}, '', '?classId=' + classId + '&carId=' + carId);
                 getLiveries(carId);
             }
 
@@ -192,11 +193,10 @@
             function copyLink(link) {
                 $("#linkField").val("[IMG]" + link + "[/IMG]");
                 $("#linkField").select();
-                if (document.execCommand("copy")) {
+                if (document.execCommand("copy"))
                     notifyCopy();
-                } else {
+                else
                     alert("Votre configuration n'autorise pas la copie dans le presse-papier, veuillez copier le lien manuellement.");
-                }
             }
 
             function notifyCopy() {
@@ -210,7 +210,8 @@
             }
 
             function checkProfile(username, handler=null) {
-                $.blockUI({ message: '<h1>Vérification du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
+                $.blockUI({ message: '<h1>Vérification du profil Raceroom en cours...</h1>',
+                            css: {backgroundColor: '#fff',color: '#444', 'border-style':'none'} });
                 
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
@@ -264,7 +265,8 @@
             }
 
             function synchronizeProfile(username, handler) {
-                $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>', css: { backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
+                $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>',
+                            css: {backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
@@ -277,13 +279,11 @@
                                                 success: function(result) {
                                                     switch (result) {
                                                         case '1':
-                                                            alert("L'utilisateur '"+username+"' n'a pas été trouvé sur la boutique Raceroom.");
-                                                            // setUsername("");
+                                                            alert("L'utilisateur '" + username + "' n'a pas été trouvé sur la boutique Raceroom.");
                                                             break;
                                                         case '2':
                                                         case '3':
-                                                            alert("Une erreur code '"+result+"' s'est produite.");
-                                                            // setUsername("");
+                                                            alert("Une erreur code '" + result + "' s'est produite.");
                                                             break;
                                                         default:
                                                             setUsername(result);
@@ -291,7 +291,6 @@
                                                 },
                                                 error: function (a, b, c) {
                                                     alert("Une erreur est survenue.");
-                                                    // setUsername("");
                                                 },
                                                 complete: function () {
                                                     synchronizingProfile = false;
@@ -303,10 +302,10 @@
                                         );
             }
 
-            function setUsername (_username, updateCookie=true) {
-                if (updateCookie) Cookie.setValue('username', _username);
-                globalUsername = _username;
-                var loginText = _username == "" ? "Aucun profil utilisé" : _username;
+            function setUsername (username, updateCookie=true) {
+                if (updateCookie) Cookie.setValue('username', username);
+                globalUsername = username;
+                var loginText = username == "" ? "Aucun profil utilisé" : username;
                 $('#usernameField').html(loginText);
             }
             
