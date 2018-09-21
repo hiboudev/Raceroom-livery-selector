@@ -1,4 +1,3 @@
-* url get, mettre un mauvais id -> select -1; mettre des lettres -> pas d'erreur
 * Faire des tests de temps d'exécution des requêtes SQL avec le nombre d'utilisateurs grandissant.
 * Afficher le splash quand l'url n'a pas de GET utilisables.
 * Sur le "?", ajouter tooltip explicatif et click->lien boutique.
