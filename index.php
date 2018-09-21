@@ -64,8 +64,6 @@
             var ajaxManager = new AjaxManager();
 
             function onPageLoaded() {
-                window.onbeforeunload = cleanBeforeExit;
-
                 var username = Cookie.getValue('username');
                 if(username != null && username != '')
                     checkProfile(username, displayUrlData);
@@ -76,6 +74,7 @@
                 }
 
                 window.onpopstate = handleHistoryChange;
+                window.onbeforeunload = cleanBeforeExit;
             }
 
             function cleanBeforeExit() {
@@ -168,6 +167,8 @@
 
             function carSelected(carId) {
                 var classId = $('#carClassSelector').val();
+                if (carId < 1 || classId < 1) return;
+
                 history.pushState({ 'carId': carId }, '', '?classId='+classId+'&carId='+carId);
                 getLiveries(carId);
             }
