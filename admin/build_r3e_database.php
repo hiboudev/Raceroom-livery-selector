@@ -56,19 +56,20 @@ foreach ($json["context"]["c"]["sections"][0]["items"] as $itemKey => $itemValue
     // actually there's only 'car' type in json
     if($itemValue["type"] == "car") {
         $className = $itemValue["car_class"]["name"];
-        if(!array_key_exists($className, $classes)) {
-            $db->query("INSERT INTO classes (name) VALUES ('{$className}');");
-            $result = $db->query("SELECT LAST_INSERT_ID();");
-            $classes[$className] = $result->fetch_array()[0];
+        preg_match('/-(\d+)-image-big.[A-Za-z]+$/', $itemValue["car_class"]["image"]["big"], $matches);
+        $classId = $matches[1];
+
+        if(!array_key_exists($classId, $classes)) {
+            $db->query("INSERT INTO classes (id, name) VALUES ({$classId}, '{$className}');");
+            $classes[$classId] = $className;
         }
 
         $carId = $itemValue["cid"];
         $carName = $itemValue["name"];
-        $carClassId = $classes[$className];
         $defaultLiveryId = $itemValue["livery_id"];
 
         $db->query("INSERT INTO cars (id, name, classId, defaultLiveryId)
-                        VALUES ({$carId},'{$carName}',{$carClassId}, {$defaultLiveryId});");
+                        VALUES ({$carId},'{$carName}',{$classId}, {$defaultLiveryId});");
         
         foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
 
@@ -112,7 +113,7 @@ function createDatabase ($connection, $dbName) {
     $connection->query("USE {$dbName};");
 
     $connection->query("CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, defaultLiveryId INT NOT NULL, PRIMARY KEY(id));");
-    $connection->query("CREATE TABLE classes (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
+    $connection->query("CREATE TABLE classes (id INT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(id));");
     $connection->query("CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, number INT NOT NULL,
                             imageUrl TEXT NOT NULL, isFree INT NOT NULL, PRIMARY KEY(id));");
 
