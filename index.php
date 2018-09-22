@@ -27,14 +27,16 @@
             .username:hover {text-decoration:underline; color: #7070d4}
             .notification {background-color: #666; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
 
-            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-color: #f2f2f2; margin: 2px 2px;}
-            .thumbnail:hover {background-color: #fff;}
-            .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #ccc; margin: 2px 2px;}
-            .thumbnailNotOwned .thumbnailText {color:#777}
+            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, white, #cecece 20%, white 87%); margin: 2px 2px;}
+            .thumbnail:hover {background-image: linear-gradient(to top, #ededed, #dbdbdb 20%, white 87%); border-bottom: 1px #aaa solid}
             .image {width: 460px; height: 230px; z-index:0}
-            .thumbnailText {position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #888; font-size: 90%; z-index:2}
+            .thumbnailText {position: absolute; bottom: 16px; left: 0; width: 100%; text-align: center; color: #888; font-weight: bold; font-size: 90%; z-index:2}
             .thumbnail:hover .thumbnailText {color: #666;}
-            .notSureIfOwned {position: absolute; top: 10px; right: 10px; color: #999; font-size: 130%; font-weight:bold; z-index:1}
+
+            .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fff; margin: 2px 2px; opacity: 0.5}
+            .thumbnailNotOwned:hover {opacity: 1}
+            .thumbnailNotOwned .thumbnailText {color:#777;}
+            .notSureIfOwned {position: absolute; bottom: 10px; right: 10px; color: #999; font-size: 130%; font-weight:bold; z-index:1}
 
             .splash {position: relative; top: 20px; text-align: center; color:#444}
             .tip {}

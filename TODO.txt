@@ -1,3 +1,4 @@
+* click maison puis retour arrière -> check profile -> pourquoi ?
 * Faire des tests de temps d'exécution des requêtes SQL avec le nombre d'utilisateurs grandissant.
 * Afficher le splash quand l'url n'a pas de GET utilisables.
 * session php pour ne pas avoir à revérifier le profil à chaque rechargement ?
