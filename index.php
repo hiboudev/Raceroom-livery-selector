@@ -7,15 +7,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <?php include("r3e_db_api.php"); ?>
-        <script src="jquery-3.3.1.min.js"></script>
-        <script src="jquery.blockUI.min.js"></script>
-        <script src="letsCook.js"></script>
-        <script src="urlTools.js"></script>
-        <script src="ajaxManager.js"></script>
+        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/jquery.blockUI.min.js"></script>
+        <script src="js/letsCook.js"></script>
+        <script src="js/urlTools.js"></script>
+        <script src="js/ajaxManager.js"></script>
 
         <style>
-            html {font-family: sans-serif; font-size: 90% }
+            html {font-family: sans-serif; font-size: 90%; background-color:#fafafa }
             body {margin: 0px;}
+
+            a {color:#313da1}
+            a:link {color:#313da1}
+            a:hover {color:#2433ab}
+            a:active {color:#1c30c9}
 
             .header {box-sizing: border-box; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
             .homeImage {width:20px; height:20px; float:left; margin-right:8px; margin-top:7px}
@@ -24,24 +29,27 @@
             .headerRightBox {float: right;}
             .usernameContainer {text-align:right;}
             .username {font-size:80%; text-decoration:none; color: #666; margin-bottom:2px}
-            .username:hover {text-decoration:underline; color: #7070d4}
+            .username:link {color: #666}
+            .username:hover {text-decoration:underline; color:#313da1;}
             .notification {background-color: #666; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
-
-            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, white, #cecece 20%, white 87%); margin: 2px 2px;}
-            .thumbnail:hover {background-image: linear-gradient(to top, #ededed, #dbdbdb 20%, white 87%); border-bottom: 1px #aaa solid}
+            
+            .thumbnailContainer {text-align:center; margin: 0 auto; }
+            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); margin: 2px 2px; border-left: #eee solid 1px; border-right: #eee solid 1px}
+            .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid}
             .image {width: 460px; height: 230px; z-index:0}
             .thumbnailText {position: absolute; bottom: 16px; left: 0; width: 100%; text-align: center; color: #888; font-weight: bold; font-size: 90%; z-index:2}
             .thumbnail:hover .thumbnailText {color: #666;}
 
-            .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fff; margin: 2px 2px; opacity: 0.5}
+            .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fafafa; margin: 2px 2px; opacity: 0.5;}
             .thumbnailNotOwned:hover {opacity: 1}
             .thumbnailNotOwned .thumbnailText {color:#777;}
             .notSureIfOwned {position: absolute; bottom: 10px; right: 10px; color: #999; font-size: 130%; font-weight:bold; z-index:1}
+            .thumbnail:hover .notSureIfOwned {color: #666}
 
-            .splash {position: relative; top: 20px; text-align: center; color:#444}
-            .tip {}
+            .splash {position: relative; top: 20px; color:#444}
+            .title {color:#323b85; }
 
-            .loginBox {display: none; margin-top: 50px; background-color:#f4f4f4; padding:4px}
+            .loginBox {display: none; margin-top: 50px; background-color:#ebebeb; padding:4px}
             .loggedPrompt {margin-right:10px}
             .subLoginBox {margin-top: 10px}
             .loginForm {display: none}
@@ -212,11 +220,11 @@
             }
 
             function checkProfile(username, handler=null) {
-                $.blockUI({ message: '<h1>Vérification du profil Raceroom en cours...</h1>',
-                            css: {backgroundColor: '#fff',color: '#444', 'border-style':'none'} });
-                
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
+
+                $.blockUI({ message: '<h1>Vérification du profil Raceroom en cours...</h1>',
+                            css: {backgroundColor: '#fff',color: '#444', 'border-style':'none'} });
                 
                 var syncTriggered = false;
 
@@ -267,11 +275,11 @@
             }
 
             function synchronizeProfile(username, handler) {
-                $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>',
-                            css: {backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
-                
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
+
+                $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>',
+                            css: {backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 ajaxManager.executeAjax(    RequestType.PROFILE_SYNC,
                                             {
@@ -282,6 +290,7 @@
                                                     switch (result) {
                                                         case '1':
                                                             alert("L'utilisateur '" + username + "' n'a pas été trouvé sur la boutique Raceroom.");
+                                                            // setUsername("");
                                                             break;
                                                         case '2':
                                                         case '3':
@@ -335,10 +344,10 @@
             <select id="carSelector" onChange="carSelected(this.value)"></select>
         </div>
 
-        <div id="thumbnailContainer">
+        <div id="thumbnailContainer" class="thumbnailContainer">
             <div class="splash">
-                <h1>Sélecteur de livrée Raceroom</h1>
-                <div class="tip"><p><b>Choisissez une classe et une voiture, cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p><p>Il n'est actuellement pas toujours possible de savoir si vous possédez la livrée par défaut d'une voiture, un point d'interrogation le signale.</p></div>
+                <h1 class="title">Sélecteur de livrée Raceroom</h1>
+                <div><p><b>Choisissez une classe et une voiture, cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p><p>Il n'est actuellement pas toujours possible de savoir si vous possédez la livrée par défaut d'une voiture, un point d'interrogation le signale.</p></div>
                 <div id="loginBox" class="loginBox">
                     <span id="loggedPrompt" class="loggedPrompt"></span>
                     <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>
@@ -350,7 +359,7 @@
                                 <input id="profileField" type="text" placeholder="Nom du profil Raceroom" />
                                 <button type="submit">Valider</button>
                             </form>
-                            <div class="forgetProfileContainer"><a href="#" class="forgetProfile" onClick="forgetProfile()">N'utilisez aucun profil</a></div>
+                            <div class="forgetProfileContainer"><a href="#" class="forgetProfile" onClick="forgetProfile()">N'utiliser aucun profil</a></div>
                             <div class="profileHelpLinkContainer"><a href="#" class="profileHelpLink" onClick="showProfileHelp()">Comment obtenir votre nom de profil ?</a></div>
                             <div class="profileHelp">
                                 <p>Rendez-vous sur le <a href="http://game.raceroom.com/store/">magasin Raceroom</a>, identifiez-vous puis ouvrez les paramètres de compte :</p>
