@@ -2,7 +2,13 @@
 
 <html>
     <head>
+        <meta charset="utf-8">
+        <!-- noindex for dev version -->
+        <!--meta name="robots" content="noindex">
+        <meta name="googlebot" content="noindex"-->
+
         <title>Sélecteur de livrée Raceroom</title>
+        <meta name="description" content="Sélectionnez une livrée Raceroom pour l'intégrer sur un forum." />
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -12,6 +18,7 @@
         <script src="js/letsCook.js"></script>
         <script src="js/urlTools.js"></script>
         <script src="js/ajaxManager.js"></script>
+
 
         <style>
             html {font-family: sans-serif; font-size: 90%; background-color:#fafafa }
@@ -223,7 +230,7 @@
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
 
-                $.blockUI({ message: '<h1>Vérification du profil Raceroom en cours...</h1>',
+                $.blockUI({ message: '<h1>Vérification du profil Raceroom...</h1>',
                             css: {backgroundColor: '#fff',color: '#444', 'border-style':'none'} });
                 
                 var syncTriggered = false;
@@ -278,7 +285,7 @@
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
 
-                $.blockUI({ message: '<h1>Synchronisation du profil Raceroom en cours...</h1>',
+                $.blockUI({ message: '<h1>Synchronisation du profil Raceroom...</h1>',
                             css: {backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
                 
                 ajaxManager.executeAjax(    RequestType.PROFILE_SYNC,
