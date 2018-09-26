@@ -1,10 +1,10 @@
-* check input : $file = filter_input(INPUT_GET, 'file', FILTER_SANITIZE_SPECIAL_CHARS);
 * click maison puis retour arrière -> check profile -> pourquoi ?
 * Afficher le splash quand l'url n'a pas de GET utilisables.
 * session php pour ne pas avoir à revérifier le profil à chaque rechargement ?
-* Sur le "?", ajouter tooltip explicatif et click->lien boutique.
 * anglais
 * mobile : en vertical les images dépassent, si on dézoom le header réduit, tester overflow.
+* check input ? : $file = filter_input(INPUT_GET, 'file', FILTER_SANITIZE_SPECIAL_CHARS);
+* Sur le "?", click->lien boutique (bof, ça nécessite d'ajouter le manufacturer en BDD et aller piocher plus de données pour afficher les livrées, et JF va peut-être corriger le problème...).
 * Pas d'affichage des voitures qui ne sont plus au magasin, comme la RUF. Elle est quand même listée dans les purchases, voir si on peut en faire quelque chose, éventuellement en réutilisant r3e_data.json.
 * Le magasin ne nous dit pas si on possède la livrée par défaut d'une voiture.
 
