@@ -111,16 +111,17 @@
 
                 if(isNaN(Number(classId))) classId = null;
                 if(isNaN(Number(carId))) carId = null;
-                // TODO if isNaN, clear param
                 
-                if(classId != null)
+                if(classId != null) {
                     selectIfExists('carClassSelector', classId);
-                    
-                if(carId != null) {
-                    getCars(classId, function(){selectIfExists('carSelector', carId);});
-                    getLiveries(carId);
+                    if(carId != null) {
+                        getCars(classId, function(){selectIfExists('carSelector', carId);});
+                        getLiveries(carId);
+                    }
+                    else getCars(classId, function(){$('#carSelector').val(-1)});
                 }
-                else getCars(classId, function(){$('#carSelector').val(-1)});
+                else if (carId != null)
+                    getLiveries(carId);
             }
 
             function selectIfExists (selector, optionValue) {
