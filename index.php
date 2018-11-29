@@ -3,9 +3,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <!-- noindex for dev version -->
-        <!--meta name="robots" content="noindex">
-        <meta name="googlebot" content="noindex"-->
+		<link rel="icon" type="image/png" href="images/favicon.png" />
 
         <title>Sélecteur de livrée Raceroom</title>
         <meta name="description" content="Sélectionnez une livrée Raceroom pour l'intégrer sur un forum." />
@@ -24,9 +22,9 @@
             html {font-family: sans-serif; font-size: 90%; background-color:#fafafa }
             body {margin: 0px;}
 
-            a {color:#313da1}
-            a:link {color:#313da1}
-            a:hover {color:#2433ab}
+            a {color:#397fbf}
+            a:link {color:#397fbf}
+            a:hover {color:#0063bf}
             a:active {color:#1c30c9}
 
             .header {box-sizing: border-box; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
@@ -54,7 +52,7 @@
             .thumbnail:hover .notSureIfOwned {color: #666}
 
             .splash {position: relative; top: 20px; color:#444}
-            .title {color:#323b85; }
+            .title {color:#397fbf; }
 
             .loginBox {display: none; margin-top: 50px; background-color:#ebebeb; padding:4px}
             .loggedPrompt {margin-right:10px}
@@ -354,6 +352,7 @@
 
         <div id="thumbnailContainer" class="thumbnailContainer">
             <div class="splash">
+				<img src="images/favicon.png" />
                 <h1 class="title">Sélecteur de livrée Raceroom</h1>
                 <div><p><b>Choisissez une classe et une voiture, cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p><p>Il n'est actuellement pas toujours possible de savoir si vous possédez la livrée par défaut d'une voiture, un point d'interrogation le signale.</p></div>
                 <div id="loginBox" class="loginBox">

@@ -97,7 +97,7 @@ function getUserLiveries($db, $carId, $userId) {
         $cssClass = $row["owned"] ? "thumbnail" : "thumbnailNotOwned";
         // TODO C'est le bordel toute cette logique
         $owned2 = $row["userLiveryId"] != null || $row["isFree"];
-        $notSureIfOwnedHtml = $row["owned"] && !$owned2 && $isDefault ? "<span title=\"Impossible de déterminer si vous possédez cette voiture.\" class=\"notSureIfOwned\">?</span>" : "";
+        $notSureIfOwnedHtml = $row["owned"] && !$owned2 && $isDefault ? "<span title=\"Impossible de déterminer si vous possédez cette livrée.\" class=\"notSureIfOwned\">?</span>" : "";
 
         echo "<div class=\"{$cssClass}\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image\" src=\"{$row['imageUrl']}\" />{$notSureIfOwnedHtml}<span class=\"thumbnailText\">{$row["title"]}</span></div>";
     }

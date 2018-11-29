@@ -15,14 +15,13 @@ function downloadFile() {
     $filePath = "../tempFiles/store_cars_".uniqid().".json";
 
     if(!copy("http://game.raceroom.com/store/cars/?json", $filePath))
-        write("Can't copy file.");
+        die("Can't copy file.");
     
     $fileContent = file_get_contents($filePath, "r");
     unlink($filePath);
     
     if ($fileContent === false) {
-        write("Unable to open file.");
-        exit;
+        die("Unable to open file.");
     }
     
     $json = json_decode($fileContent, true);
