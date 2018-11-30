@@ -78,28 +78,21 @@ function getLiveries($carId, $username){
 
 function getUserLiveries($db, $carId, $userId) {
     // 'owned' in the request is used only to sort results, I add the default livery for graphical design purpose but there's still a doubt on this purchase.
-    $result = $db->query("SELECT liveries.imageUrl, liveries.isFree, liveries.id, liveries.title, userLiveries.liveryId AS userLiveryId
-            , IF(userLiveries.liveryId IS NULL AND liveries.isFree=0
-                , IF(userCars.carId IS NULL, FALSE
-                    , IF(cars.defaultLiveryId=liveries.id, TRUE, FALSE)), TRUE) as owned
-            , cars.defaultLiveryId FROM liveries LEFT JOIN userLiveries ON
+    $result = $db->query("SELECT liveries.imageUrl, liveries.id, liveries.title, userLiveries.liveryId AS userLiveryId
+            , IF(userLiveries.liveryId IS NULL, FALSE, TRUE) as owned
+            FROM liveries LEFT JOIN userLiveries ON
                 (userLiveries.userId={$userId} AND liveries.id = userLiveries.liveryId)
-            , cars LEFT JOIN userCars ON (userCars.userId={$userId} AND cars.id = userCars.carId)
-            WHERE liveries.carId={$carId} AND cars.id={$carId}
+            WHERE liveries.carId={$carId}
             ORDER BY owned DESC, number, title");
     
     $all = $result->fetch_all(MYSQLI_ASSOC);
     
     for ($i=0; $i < count($all); $i++) {
         $row = $all[$i];
-        $isDefault = $row["defaultLiveryId"] == $row["id"];
 
         $cssClass = $row["owned"] ? "thumbnail" : "thumbnailNotOwned";
-        // TODO C'est le bordel toute cette logique
-        $owned2 = $row["userLiveryId"] != null || $row["isFree"];
-        $notSureIfOwnedHtml = $row["owned"] && !$owned2 && $isDefault ? "<span title=\"Impossible de déterminer si vous possédez cette livrée.\" class=\"notSureIfOwned\">?</span>" : "";
 
-        echo "<div class=\"{$cssClass}\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image\" src=\"{$row['imageUrl']}\" />{$notSureIfOwnedHtml}<span class=\"thumbnailText\">{$row["title"]}</span></div>";
+        echo "<div class=\"{$cssClass}\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image\" src=\"{$row['imageUrl']}\" /><span class=\"thumbnailText\">{$row["title"]}</span></div>";
     }
 }
 

@@ -32,28 +32,11 @@ function synchronizeUserProfile ($username) {
     $userId = checkUserExists($connection, $username);
 
     $connection->query("DELETE FROM userLiveries WHERE userId = $userId;");
-    $connection->query("DELETE FROM userCars WHERE userId = $userId;");
     
-    // TODO Moyen d'optimiser en une seule boucle ?
     foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue)
         foreach ($contentValue["items"] as $itemKey => $itemValue)
             if($itemValue["type"] == "livery")
                 $connection->query("INSERT into userLiveries VALUES ({$userId}, {$itemValue["id"]});");
-    
-    foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue)
-        foreach ($contentValue["items"] as $itemKey => $itemValue)
-            if ($itemValue["type"] == "car") {
-                $carId = $itemValue["id"];
-                $result = $connection->query("SELECT defaultLiveryId FROM cars WHERE id={$carId}");
-                $defaultLiveryId = $result->fetch_array()[0]; // TODO La RUF n'a pas de livrée par défaut, voir pas de livrée du tout
-
-                $result = $connection->query("SELECT userLiveries.liveryId, liveries.carId FROM userLiveries, liveries WHERE userLiveries.userId={$userId} AND liveries.carId={$carId} AND userLiveries.liveryId=liveries.id");
-                
-                if($result->num_rows == 0)
-                    $connection->query("INSERT into userLiveries VALUES ({$userId}, {$defaultLiveryId});");
-
-                $connection->query("INSERT into userCars VALUES ({$userId}, {$carId});");
-            }
 
     $connection->close();
 

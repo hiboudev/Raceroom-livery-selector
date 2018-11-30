@@ -48,24 +48,22 @@ function fillDatabase($db, $json) {
     
             $carId = $itemValue["cid"];
             $carName = $itemValue["name"];
-            $defaultLiveryId = $itemValue["livery_id"];
     
-            $db->query("INSERT INTO cars (id, name, classId, defaultLiveryId)
-                            VALUES ({$carId},'{$carName}',{$classId}, {$defaultLiveryId});");
+            $db->query("INSERT INTO cars (id, name, classId)
+                            VALUES ({$carId},'{$carName}',{$classId});");
             
             foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
     
                 $liveryId = $liveryValue["cid"];
                 $liveryTitle = $liveryValue["title"];
                 $imageUrl = $liveryValue["thumb"];
-                $isFree = $liveryValue["free"] == true ? 1 : 0;
     
                 $liveryNumber = 9999;
                 preg_match('/^#(\d+)/', $liveryValue["name"], $matches);
                 if (count($matches) > 1)
                     $liveryNumber = $matches[1];
     
-                $db->query("INSERT INTO liveries (id, title, carId, number, imageUrl, isFree) VALUES ({$liveryId},'{$liveryTitle}', {$carId}, {$liveryNumber}, '{$imageUrl}', {$isFree});"); // TODO take only end of url
+                $db->query("INSERT INTO liveries (id, title, carId, number, imageUrl) VALUES ({$liveryId},'{$liveryTitle}', {$carId}, {$liveryNumber}, '{$imageUrl}');"); // TODO take only end of url
             }
         }
     }
@@ -104,15 +102,13 @@ function createDatabase ($connection, $dbName) {
 
     $connection->query("USE {$dbName};");
 
-    $connection->query("CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, defaultLiveryId INT NOT NULL, PRIMARY KEY(id));");
+    $connection->query("CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));");
     $connection->query("CREATE TABLE classes (id INT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(id));");
     $connection->query("CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, number INT NOT NULL,
-                            imageUrl TEXT NOT NULL, isFree INT NOT NULL, PRIMARY KEY(id));");
+                            imageUrl TEXT NOT NULL, PRIMARY KEY(id));");
 
     $connection->query("CREATE TABLE IF NOT EXISTS users (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
     $connection->query("CREATE TABLE IF NOT EXISTS userLiveries (userId INT NOT NULL, liveryId INT NOT NULL);");
-    // I need this only cause R3E store doesn't list the default liveries. This table helps to know when a default livery is not owned in the case we don't own the car.
-    $connection->query("CREATE TABLE IF NOT EXISTS userCars (userId INT NOT NULL, carId INT NOT NULL);");
 }
 
 function emptyDatabase ($connection, $dbName) {
@@ -123,6 +119,9 @@ function emptyDatabase ($connection, $dbName) {
     $connection->query("TRUNCATE TABLE cars;");
     $connection->query("TRUNCATE TABLE classes;");
     $connection->query("TRUNCATE TABLE liveries;");
+	
+	// Table from old version, when default liveries weren't listed by R3E shop.
+    $connection->query("DROP TABLE IF EXISTS userCars;");
 }
 
 function write($text) {

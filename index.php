@@ -48,8 +48,6 @@
             .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fafafa; margin: 2px 2px; opacity: 0.5;}
             .thumbnailNotOwned:hover {opacity: 1}
             .thumbnailNotOwned .thumbnailText {color:#777;}
-            .notSureIfOwned {position: absolute; bottom: 10px; right: 10px; color: #999; font-size: 130%; font-weight:bold; z-index:2}
-            .thumbnail:hover .notSureIfOwned {color: #666}
 
             .splash {position: relative; top: 20px; color:#444}
             .title {color:#397fbf; }
@@ -354,7 +352,7 @@
             <div class="splash">
 				<img src="images/favicon.png" />
                 <h1 class="title">Sélecteur de livrée Raceroom</h1>
-                <div><p><b>Choisissez une classe et une voiture, cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p><p>Il n'est actuellement pas toujours possible de savoir si vous possédez la livrée par défaut d'une voiture, un point d'interrogation le signale.</p></div>
+                <div><p><b>Choisissez une classe et une voiture, cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p></div>
                 <div id="loginBox" class="loginBox">
                     <span id="loggedPrompt" class="loggedPrompt"></span>
                     <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>
