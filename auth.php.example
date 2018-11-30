@@ -1,6 +1,9 @@
 <?php
 
-require_once 'prod/prod.php';
+// Rename this file to auth.php and set your values.
+// Choice between environments is done in env/env.php.
+
+require_once 'env/env.php';
 
 switch (EXEC_ENV) {
 
