@@ -10,7 +10,7 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <?php include("r3e_db_api.php"); ?>
+        <?php include "r3e_db_api.php";?>
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/jquery.blockUI.min.js"></script>
         <script src="js/letsCook.js"></script>
@@ -37,13 +37,15 @@
             .username:link {color: #666}
             .username:hover {text-decoration:underline; color:#313da1;}
             .notification {background-color: #666; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
-            
+
             .thumbnailContainer {text-align:center; margin: 0 auto; }
             .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); margin: 2px 2px; border-left: #eee solid 1px; border-right: #eee solid 1px}
             .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid}
             .image {width: 460px; height: 230px; z-index:0}
             .thumbnailText {position: absolute; bottom: 16px; left: 0; width: 100%; text-align: center; color: #888; font-weight: bold; font-size: 90%; z-index:1}
             .thumbnail:hover .thumbnailText {color: #666;}
+            .carName {color: #444; padding:8px 0px; margin-bottom:10px; }
+            .carName:not(:first-child) {margin-top: 40px; padding-top: 10px; border-top: 1px solid #aaa; background-image: linear-gradient(to bottom, #fff, #fafafa);}
 
             .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fafafa; margin: 2px 2px; opacity: 0.5;}
             .thumbnailNotOwned:hover {opacity: 1}
@@ -101,23 +103,26 @@
             function displayUrlData() {
                 if (!urlParamExists("carId") && !urlParamExists("classId"))
                     return;
-                
+
                 var carId = getUrlParam("carId");
                 var classId = getUrlParam("classId");
 
                 if(isNaN(Number(classId))) classId = null;
                 if(isNaN(Number(carId))) carId = null;
-                
+
                 if(classId != null) {
                     selectIfExists('carClassSelector', classId);
                     if(carId != null) {
                         getCars(classId, function(){selectIfExists('carSelector', carId);});
-                        getLiveries(carId);
+                        getCarLiveries(carId);
                     }
-                    else getCars(classId, function(){$('#carSelector').val(-1)});
+                    else {
+                        getCars(classId, function(){$('#carSelector').val(-1)});
+                        getClassLiveries(classId);
+                    }
                 }
                 else if (carId != null)
-                    getLiveries(carId);
+                    getCarLiveries(carId);
             }
 
             function selectIfExists (selector, optionValue) {
@@ -171,7 +176,7 @@
                                             {
                                                 type: "GET",
                                                 url: "r3e_db_api.php",
-                                                data: "getData&classId=" + classId,
+                                                data: "dataType=cars&classId=" + classId,
                                                 success: function(result) {
                                                     $("#carSelector").html(result);
                                                     if(handler != null) handler();
@@ -180,23 +185,47 @@
                                         );
             };
 
+            function classSelected(classId) {
+                if (classId < 0) return;
+
+                history.pushState({'classId': classId}, '', '?classId=' + classId);
+                getCars(classId);
+                getClassLiveries(classId);
+            }
+
             function carSelected(carId) {
                 var classId = $('#carClassSelector').val();
                 if (carId < 0 || classId < 0) return;
 
                 history.pushState({'carId': carId}, '', '?classId=' + classId + '&carId=' + carId);
-                getLiveries(carId);
+                getCarLiveries(carId);
             }
 
-            function getLiveries(carId) {
+            function getCarLiveries(carId) {
                 if(carId < 0) return;
                 $("#thumbnailContainer").empty();
-                
+
                 ajaxManager.executeAjax(    RequestType.GET_LIVERIES,
                                             {
                                                 type: "GET",
                                                 url: "r3e_db_api.php",
-                                                data: "getData&carId=" + carId + "&username=" + globalUsername,
+                                                data: "dataType=carLiveries&carId=" + carId + "&username=" + globalUsername,
+                                                success: function(result) {
+                                                    $("#thumbnailContainer").html(result);
+                                                }
+                                            }
+                                        );
+            }
+
+            function getClassLiveries(classId) {
+                if(classId < 0) return;
+                $("#thumbnailContainer").empty();
+
+                ajaxManager.executeAjax(    RequestType.GET_LIVERIES,
+                                            {
+                                                type: "GET",
+                                                url: "r3e_db_api.php",
+                                                data: "dataType=classLiveries&classId=" + classId + "&username=" + globalUsername,
                                                 success: function(result) {
                                                     $("#thumbnailContainer").html(result);
                                                 }
@@ -229,7 +258,7 @@
 
                 $.blockUI({ message: '<h1>Vérification du profil Raceroom...</h1>',
                             css: {backgroundColor: '#fff',color: '#444', 'border-style':'none'} });
-                
+
                 var syncTriggered = false;
 
                 ajaxManager.executeAjax(    RequestType.PROFILE_CHECK,
@@ -264,7 +293,7 @@
                                             }
                                         );
             }
-            
+
             function loginClicked(event) {
                 event.preventDefault();
 
@@ -284,7 +313,7 @@
 
                 $.blockUI({ message: '<h1>Synchronisation du profil Raceroom...</h1>',
                             css: {backgroundColor: '#fff', color: '#444', 'border-style':'none'} });
-                
+
                 ajaxManager.executeAjax(    RequestType.PROFILE_SYNC,
                                             {
                                                 type: "GET",
@@ -323,7 +352,7 @@
                 var loginText = username == "" ? "Aucun profil utilisé" : username;
                 $('#usernameField').html(loginText);
             }
-            
+
             function showProfileHelp() {
                 $('.profileHelp').css('display', 'block');
                 $('.profileHelpLink').css('display', 'none');
@@ -340,10 +369,10 @@
                 <input id="linkField" type="text" readonly />
             </div>
             <span id="notification" class="notification">Lien copié dans le presse-papier !</span>
-            
+
             <a href="."><img class="homeImage" src="images/home.png"/></a>
-            <select id="carClassSelector" onChange="getCars(this.value)">
-                <?php getClasses(); ?>
+            <select id="carClassSelector" onChange="classSelected(this.value)">
+                <?php getClasses();?>
             </select>
             <select id="carSelector" onChange="carSelected(this.value)"></select>
         </div>
