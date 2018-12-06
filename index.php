@@ -36,7 +36,7 @@
             .username {font-size:80%; text-decoration:none; color: #666; margin-bottom:2px}
             .username:link {color: #666}
             .username:hover {text-decoration:underline; color:#313da1;}
-            .notification {background-color: #666; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
+            .notification {background-color: #397fbf; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
 
             .thumbnailContainer {text-align:center; margin: 0 auto; }
             .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); margin: 2px 2px; border-left: #eee solid 1px; border-right: #eee solid 1px}
