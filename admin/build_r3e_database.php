@@ -49,21 +49,24 @@ function fillDatabase($db, $json)
             $classId = $matches[1];
 
             if (!array_key_exists($classId, $classes)) {
-                $db->query("INSERT INTO classes (id, name) VALUES ($classId, '$className');");
+                query($db, "INSERT INTO classes (id, name)
+                            VALUES ($classId, '$className');");
+
                 $classes[$classId] = $className;
             }
 
             $carId   = $itemValue["cid"];
             $carName = $itemValue["name"];
 
-            $db->query("INSERT INTO cars (id, name, classId)
-                            VALUES ($carId,'$carName',$classId);");
+            query($db, "INSERT INTO cars (id, name, classId)
+                        VALUES ($carId,'$carName',$classId);");
 
             foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
 
                 $liveryId    = $liveryValue["cid"];
                 $liveryTitle = $liveryValue["title"];
                 $imageUrl    = $liveryValue["thumb"];
+                $isFree      = $liveryValue["free"] == true ? 1 : 0;
 
                 $liveryNumber = 9999;
                 preg_match('/^#(\d+)/', $liveryValue["name"], $matches);
@@ -71,15 +74,11 @@ function fillDatabase($db, $json)
                     $liveryNumber = $matches[1];
                 }
 
-                $db->query("INSERT INTO liveries (id, title, carId, classId, number, imageUrl) VALUES ($liveryId,'$liveryTitle', $carId, $classId, $liveryNumber, '$imageUrl');"); // TODO take only end of url
+                query($db, "INSERT INTO liveries (id, title, carId, classId, number, imageUrl, isFree)
+                            VALUES ($liveryId, \"$liveryTitle\", $carId, $classId, $liveryNumber, \"$imageUrl\", $isFree);");
             }
         }
     }
-}
-
-function databaseExists($connection, $dbName)
-{
-    return $connection->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbName'")->num_rows == 1;
 }
 
 function getDatabaseConnection()
@@ -106,37 +105,47 @@ function getDatabaseConnection()
     return $db;
 }
 
+function databaseExists($connection, $dbName)
+{
+    return query($connection, "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbName'")->num_rows == 1;
+}
+
 function createDatabase($connection, $dbName)
 {
     write("Creating database...");
 
-    if ($connection->query("CREATE DATABASE IF NOT EXISTS {$dbName};") === false) {
-        write("Error creating database: " . $connection->error);
-    }
+    query($connection,
+        "CREATE DATABASE IF NOT EXISTS {$dbName};
+        USE {$dbName};
 
-    $connection->query("USE {$dbName};");
-
-    $connection->query("CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));");
-    $connection->query("CREATE TABLE classes (id INT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(id));");
-    $connection->query("CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, classId INT NOT NULL, number INT NOT NULL,
-                            imageUrl TEXT NOT NULL, PRIMARY KEY(id));");
-
-    $connection->query("CREATE TABLE IF NOT EXISTS users (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
-    $connection->query("CREATE TABLE IF NOT EXISTS userLiveries (userId INT NOT NULL, liveryId INT NOT NULL);");
+        CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));
+        CREATE TABLE classes (id INT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(id));
+        CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, classId INT NOT NULL, number INT NOT NULL,
+                                imageUrl TEXT NOT NULL, isFree INT NOT NULL, PRIMARY KEY(id));
+        CREATE TABLE users (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));
+        CREATE TABLE userLiveries (userId INT NOT NULL, liveryId INT NOT NULL);
+    ");
 }
 
 function emptyDatabase($connection, $dbName)
 {
     write("Emptying database...");
+    // Can't send truncate query with another one (shows an error but works... o.O).
+    query($connection, "USE $dbName; ");
+    query($connection, "TRUNCATE TABLE cars;");
+    query($connection, "TRUNCATE TABLE classes;");
+    query($connection, "TRUNCATE TABLE liveries;");
+}
 
-    $connection->query("USE {$dbName};");
+function query($db, $sql)
+{
+    $result = $db->query($sql);
 
-    $connection->query("TRUNCATE TABLE cars;");
-    $connection->query("TRUNCATE TABLE classes;");
-    $connection->query("TRUNCATE TABLE liveries;");
+    if (!$result) {
+        die("ERROR: " . $db->error);
+    }
 
-    // Table from old version, when default liveries weren't listed by R3E shop.
-    $connection->query("DROP TABLE IF EXISTS userCars;");
+    return $result;
 }
 
 function write($text)

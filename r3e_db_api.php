@@ -92,7 +92,7 @@ function getUserLiveries($db, $id, $userId, $isClassId)
     $idColumn = $isClassId ? "classId" : "carId";
 
     $result = $db->query("SELECT liveries.imageUrl, liveries.id, liveries.title, userLiveries.liveryId AS userLiveryId, cars.name as carName
-            , IF(userLiveries.liveryId IS NULL, FALSE, TRUE) as owned
+            , IF(userLiveries.liveryId IS NOT NULL OR liveries.isFree=1, TRUE, FALSE) as owned
             FROM cars, liveries LEFT JOIN userLiveries ON
                 (userLiveries.userId=$userId AND liveries.id = userLiveries.liveryId)
             WHERE liveries.$idColumn=$id AND cars.id = liveries.carId
