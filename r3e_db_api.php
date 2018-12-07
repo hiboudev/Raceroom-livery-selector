@@ -129,7 +129,7 @@ function displayLiveries($rows)
 
         $cssClass = !array_key_exists("owned", $row) || $row["owned"] ? "thumbnail" : "thumbnailNotOwned";
 
-        echo "<div class=\"$cssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" data-src=\"{$row['imageUrl']}\" /><span class=\"thumbnailText\">{$row["title"]}</span></div>";
+        echo "<div class=\"$cssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><span class=\"thumbnailText\">{$row["title"]}</span></div>";
 
         $previousCarName = $carName;
     }
