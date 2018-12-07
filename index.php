@@ -83,7 +83,7 @@
             function onPageLoaded() {
                 var username = Cookie.getValue('username');
                 if(username != null && username != '')
-                    checkProfile(username, displayUrlData);
+                    checkProfile(username.trim(), displayUrlData);
                 else {
                     setUsername('');
                     initializeLoginBox();
