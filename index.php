@@ -45,8 +45,9 @@
             .image {width: 460px; height: 230px; z-index:0;}
             .thumbnailText {position: absolute; bottom: 16px; left: 0; width: 100%; text-align: center; color: #888; font-weight: bold; font-size: 90%; z-index:1}
             .thumbnail:hover .thumbnailText {color: #666;}
-            .carName {color: #444; padding-bottom: 8px; }
-            .carName:not(:first-child) {margin-top: 40px; padding-top: 15px; border-top: 1px solid #aaa; background-image: linear-gradient(to bottom, #eaeaea, #fafafa);}
+            .carName {color: #444; padding-top: 15px; padding-bottom: 8px; background-image: linear-gradient(to bottom, #eaeaea, #fafafa); border-top: 1px solid #aaa;}
+            .carName:first-child {margin-top: 0px}
+            .carName:not(:first-child) {margin-top: 40px;  }
 
             .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fafafa; margin: 2px 2px; opacity: 0.5;}
             .thumbnailNotOwned:hover {opacity: 1}
