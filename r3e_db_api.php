@@ -36,7 +36,7 @@ function getClasses()
 {
     $db = getDatabase();
 
-    $result = $db->query("SELECT * from classes ORDER BY name");
+    $result = $db->query("SELECT * from classes ORDER BY name;");
 
     $all = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -54,7 +54,7 @@ function getCars($classId)
 {
     $db = getDatabase();
 
-    $result = $db->query("SELECT * from cars WHERE classId = {$classId} ORDER BY name");
+    $result = $db->query("SELECT * from cars WHERE classId = $classId ORDER BY name;");
 
     $all = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -79,7 +79,7 @@ function getLiveries($id, $username, $isClassId = false)
     $userId = getUserId($db, $username);
 
     if ($userId != -1) {
-        getUserLiveries($db, $id, $userId, $isClassId);
+        getUserLiveries($db, $id, $isClassId, $userId);
     } else {
         getAllLiveries($db, $id, $isClassId);
     }
@@ -87,16 +87,18 @@ function getLiveries($id, $username, $isClassId = false)
     $db->close();
 }
 
-function getUserLiveries($db, $id, $userId, $isClassId)
+function getUserLiveries($db, $id, $isClassId, $userId)
 {
-    $idColumn = $isClassId ? "classId" : "carId";
+    $idColumnName = $isClassId ? "classId" : "carId";
 
-    $result = $db->query("SELECT liveries.imageUrl, liveries.id, liveries.title, userLiveries.liveryId AS userLiveryId, cars.name as carName
+    $result = $db->query(
+        "SELECT liveries.imageUrl, liveries.title, cars.name as carName
             , IF(userLiveries.liveryId IS NOT NULL OR liveries.isFree=1, TRUE, FALSE) as owned
-            FROM cars, liveries LEFT JOIN userLiveries ON
-                (userLiveries.userId=$userId AND liveries.id = userLiveries.liveryId)
-            WHERE liveries.$idColumn=$id AND cars.id = liveries.carId
-            ORDER BY carName, owned DESC, number, title");
+        FROM cars, liveries
+        LEFT JOIN userLiveries
+            ON (userLiveries.userId = $userId AND userLiveries.liveryId = liveries.id)
+        WHERE liveries.$idColumnName = $id AND cars.id = liveries.carId
+        ORDER BY carName, owned DESC, number, title");
 
     $rows = $result->fetch_all(MYSQLI_ASSOC);
     displayLiveries($rows);
@@ -104,12 +106,13 @@ function getUserLiveries($db, $id, $userId, $isClassId)
 
 function getAllLiveries($db, $id, $isClassId)
 {
-    $idColumn = $isClassId ? "classId" : "carId";
+    $idColumnName = $isClassId ? "classId" : "carId";
 
-    $result = $db->query("SELECT liveries.imageUrl, liveries.title, cars.name as carName
-            FROM liveries, cars
-            WHERE liveries.$idColumn = {$id} AND cars.id = liveries.carId
-            ORDER BY carName, number, title");
+    $result = $db->query(
+        "SELECT liveries.imageUrl, liveries.title, cars.name as carName
+        FROM liveries, cars
+        WHERE liveries.$idColumnName = $id AND cars.id = liveries.carId
+        ORDER BY carName, number, title");
 
     $rows = $result->fetch_all(MYSQLI_ASSOC);
     displayLiveries($rows);
