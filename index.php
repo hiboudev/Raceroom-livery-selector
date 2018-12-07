@@ -16,6 +16,7 @@
         <script src="js/letsCook.js"></script>
         <script src="js/urlTools.js"></script>
         <script src="js/ajaxManager.js"></script>
+        <script src="js/yall-2.1.0.min.js"></script>
 
 
         <style>
@@ -39,13 +40,13 @@
             .notification {background-color: #397fbf; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
 
             .thumbnailContainer {text-align:center; margin: 0 auto; }
-            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); margin: 2px 2px; border-left: #eee solid 1px; border-right: #eee solid 1px}
+            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); margin: 2px 2px;}
             .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid}
-            .image {width: 460px; height: 230px; z-index:0}
+            .image {width: 460px; height: 230px; z-index:0;}
             .thumbnailText {position: absolute; bottom: 16px; left: 0; width: 100%; text-align: center; color: #888; font-weight: bold; font-size: 90%; z-index:1}
             .thumbnail:hover .thumbnailText {color: #666;}
-            .carName {color: #444; padding:8px 0px; margin-bottom:10px; }
-            .carName:not(:first-child) {margin-top: 40px; padding-top: 10px; border-top: 1px solid #aaa; background-image: linear-gradient(to bottom, #fff, #fafafa);}
+            .carName {color: #444; padding-bottom: 8px; }
+            .carName:not(:first-child) {margin-top: 40px; padding-top: 15px; border-top: 1px solid #aaa; background-image: linear-gradient(to bottom, #eaeaea, #fafafa);}
 
             .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fafafa; margin: 2px 2px; opacity: 0.5;}
             .thumbnailNotOwned:hover {opacity: 1}
@@ -212,6 +213,7 @@
                                                 data: "dataType=carLiveries&carId=" + carId + "&username=" + globalUsername,
                                                 success: function(result) {
                                                     $("#thumbnailContainer").html(result);
+                                                    yall();
                                                 }
                                             }
                                         );
@@ -228,6 +230,7 @@
                                                 data: "dataType=classLiveries&classId=" + classId + "&username=" + globalUsername,
                                                 success: function(result) {
                                                     $("#thumbnailContainer").html(result);
+                                                    yall();
                                                 }
                                             }
                                         );
