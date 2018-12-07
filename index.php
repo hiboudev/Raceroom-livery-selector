@@ -119,7 +119,7 @@
                         getCarLiveries(carId);
                     }
                     else {
-                        getCars(classId, function(){$('#carSelector').val(-1)});
+                        getCars(classId, selectIfUniqueCar);
                         getClassLiveries(classId);
                     }
                 }
@@ -136,6 +136,12 @@
                     }
                 });
                 $("#"+selector).val(optionExists ? optionValue : -1);
+            }
+
+            function selectIfUniqueCar(){
+                var carCount = $("#carSelector option").length - 1;
+                if(carCount == 1)
+                    $('#carSelector option')[1].selected = true;
             }
 
             function forgetProfile() {
@@ -191,7 +197,7 @@
                 if (classId < 0) return;
 
                 history.pushState({'classId': classId}, '', '?classId=' + classId);
-                getCars(classId);
+                getCars(classId, selectIfUniqueCar);
                 getClassLiveries(classId);
             }
 
