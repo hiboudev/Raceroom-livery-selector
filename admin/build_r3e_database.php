@@ -51,23 +51,17 @@ function getLiveryDriverList()
 function getStoreCarList()
 {
     write("Downloading store car list...");
-    $filePath = "../tempFiles/store_cars_" . uniqid() . ".json";
 
-    // TODO utiliser directement file_get_content()
-    if (!copy("http://game.raceroom.com/store/cars/?json", $filePath)) {
-        die("Can't copy file.");
-    }
-
-    $fileContent = file_get_contents($filePath, "r");
-    unlink($filePath);
+    $url         = "http://game.raceroom.com/store/cars/?json";
+    $fileContent = file_get_contents($url);
 
     if ($fileContent === false) {
-        die("Unable to open file.");
+        die("Unable to open URL: $url");
     }
 
     $json = json_decode($fileContent, true);
     if ($json == null) {
-        die("Can't parse json.");
+        die("Can't parse json from URL: $url");
     }
 
     return $json;
@@ -130,7 +124,7 @@ function getDatabaseConnection()
         $db = new mysqli($dbAddress, $dbUserName, $dbPassword);
     } catch (Exception $e) {
         var_dump($e);
-        exit;
+        die("Can't connect to database.");
     }
 
     if ($db->connect_error) {
@@ -146,36 +140,34 @@ function getDatabaseConnection()
     return $db;
 }
 
-function databaseExists($connection, $dbName)
+function databaseExists($db, $dbName)
 {
-    return query($connection, "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbName'")->num_rows == 1;
+    return query($db, "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbName'")->num_rows == 1;
 }
 
-function createDatabase($connection, $dbName)
+function createDatabase($db, $dbName)
 {
     write("Creating database...");
 
-    query($connection,
-        "CREATE DATABASE IF NOT EXISTS {$dbName};
-        USE {$dbName};
+    query($db, "CREATE DATABASE IF NOT EXISTS $dbName");
+    query($db, "USE $dbName;");
 
-        CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));
-        CREATE TABLE classes (id INT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(id));
-        CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, classId INT NOT NULL, number INT NOT NULL,
-                                imageUrl TEXT NOT NULL, isFree INT NOT NULL, drivers TEXT NOT NULL, PRIMARY KEY(id));
-        CREATE TABLE users (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));
-        CREATE TABLE userLiveries (userId INT NOT NULL, liveryId INT NOT NULL);
-    ");
+    query($db, "CREATE TABLE cars           (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));");
+    query($db, "CREATE TABLE classes        (id INT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(id));");
+    query($db, "CREATE TABLE liveries       (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, classId INT NOT NULL, number INT NOT NULL,
+                                                imageUrl TEXT NOT NULL, isFree INT NOT NULL, drivers TEXT NOT NULL, PRIMARY KEY(id));");
+    query($db, "CREATE TABLE users          (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
+    query($db, "CREATE TABLE userLiveries   (userId INT NOT NULL, liveryId INT NOT NULL);");
 }
 
-function emptyDatabase($connection, $dbName)
+function emptyDatabase($db, $dbName)
 {
     write("Emptying database...");
-    // Can't send truncate query with another one (shows an error but works... o.O).
-    query($connection, "USE $dbName; ");
-    query($connection, "TRUNCATE TABLE cars;");
-    query($connection, "TRUNCATE TABLE classes;");
-    query($connection, "TRUNCATE TABLE liveries;");
+
+    query($db, "USE $dbName; ");
+    query($db, "TRUNCATE TABLE cars;");
+    query($db, "TRUNCATE TABLE classes;");
+    query($db, "TRUNCATE TABLE liveries;");
 }
 
 function query($db, $sql)

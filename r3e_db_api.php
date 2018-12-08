@@ -144,7 +144,7 @@ function getUserId($db, $username)
         return -1;
     }
 
-    $userResult = $db->query("SELECT * FROM users WHERE name='{$username}';");
+    $userResult = $db->query("SELECT * FROM users WHERE name='$username';");
     if ($userResult != null && $userResult->num_rows == 1) {
         return $userResult->fetch_assoc()["id"];
     } else {
@@ -162,7 +162,7 @@ function getDatabase()
         die("Connection failed: " . $db->connect_error);
     }
 
-    $db->query("USE {$dbName}");
+    $db->query("USE $dbName");
 
     return $db;
 }

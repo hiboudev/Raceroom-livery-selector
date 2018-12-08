@@ -1,21 +1,22 @@
 <?php
 
-if(isset($_GET['username']))
+if (isset($_GET['username'])) {
     synchronizeUserProfile($_GET['username']);
-else if (isset($_GET['checkUsername']))
+} else if (isset($_GET['checkUsername'])) {
     checkUsername($_GET['checkUsername']);
-
+}
 
 /**
  * Print (all strings):
  * - 0: registered user.
  * - 1: not registered user.
  */
-function checkUsername ($username) {
+function checkUsername($username)
+{
     $connection = getDatabaseConnection();
     $userExists = userExists($connection, $username);
     $connection->close();
-    
+
     exit($userExists ? "0" : "1");
 }
 
@@ -26,66 +27,69 @@ function checkUsername ($username) {
  * - 2: error reading downloaded profile file
  * - 3: can't parse json
  */
-function synchronizeUserProfile ($username) {
+function synchronizeUserProfile($username)
+{
     $connection = getDatabaseConnection();
-    $json = downloadUserProfile ($username);
-    $userId = checkUserExists($connection, $username);
+    $json       = downloadUserProfile($username);
+    $userId     = checkUserExists($connection, $username);
 
     $connection->query("DELETE FROM userLiveries WHERE userId = $userId;");
-    
-    foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue)
-        foreach ($contentValue["items"] as $itemKey => $itemValue)
-            if($itemValue["type"] == "livery")
+
+    foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue) {
+        foreach ($contentValue["items"] as $itemKey => $itemValue) {
+            if ($itemValue["type"] == "livery") {
                 $connection->query("INSERT into userLiveries VALUES ({$userId}, {$itemValue["id"]});");
+            }
+        }
+    }
 
     $connection->close();
 
     exit($username); // Réponse pour JS
 }
 
-function downloadUserProfile ($username) {
-    $fileName = 'tempFiles/' . $username . uniqid(); //'tempFiles/hiboudev';
-    
-    @copy("http://game.raceroom.com/users/{$username}/purchases?json", $fileName) or exit('1');
-
-    $fileContent = file_get_contents($fileName, "r");
-    if ($fileContent === false)
+function downloadUserProfile($username)
+{
+    $fileContent = file_get_contents("http://game.raceroom.com/users/{$username}/purchases?json");
+    if ($fileContent === false) {
         exit('2');
+    }
 
-    unlink ($fileName);
-    
     $json = json_decode($fileContent, true);
-    if($json == null)
-        exit ('3');
+    if ($json == null) {
+        exit('3');
+    }
 
     return $json;
 }
 
-function getDatabaseConnection () {
+function getDatabaseConnection()
+{
     require_once "auth.php";
-    $connection = new mysqli($dbAddress, $dbUserName, $dbPassword) ;
+    $connection = new mysqli($dbAddress, $dbUserName, $dbPassword);
     $connection->query("USE {$dbName};");
 
     return $connection;
 }
 
-function userExists($connection, $username) {
+function userExists($connection, $username)
+{
     return $connection->query("SELECT id FROM users WHERE name='{$username}';")->num_rows == 1;
 }
 
-function checkUserExists($connection, $username) {
+function checkUserExists($connection, $username)
+{
     $result = $connection->query("SELECT id FROM users WHERE name='{$username}';");
-    
+
     if ($result->num_rows == 0) {
         $connection->query("INSERT INTO users (name) VALUES ('{$username}');");
         $result = $connection->query("SELECT LAST_INSERT_ID();");
     }
-    
+
     return $result->fetch_array()[0];
 }
 
-function write($text) {
-    echo $text."<br />";
+function write($text)
+{
+    echo $text . "<br />";
 }
-
-?>
