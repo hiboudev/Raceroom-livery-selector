@@ -92,7 +92,7 @@ function getUserLiveries($db, $id, $isClassId, $userId)
     $idColumnName = $isClassId ? "classId" : "carId";
 
     $result = $db->query(
-        "SELECT liveries.imageUrl, liveries.title, cars.name as carName
+        "SELECT liveries.imageUrl, liveries.title, liveries.drivers, cars.name as carName
             , IF(userLiveries.liveryId IS NOT NULL OR liveries.isFree=1, TRUE, FALSE) as owned
         FROM cars, liveries
         LEFT JOIN userLiveries
@@ -109,7 +109,7 @@ function getAllLiveries($db, $id, $isClassId)
     $idColumnName = $isClassId ? "classId" : "carId";
 
     $result = $db->query(
-        "SELECT liveries.imageUrl, liveries.title, cars.name as carName
+        "SELECT liveries.imageUrl, liveries.title, liveries.drivers, cars.name as carName
         FROM liveries, cars
         WHERE liveries.$idColumnName = $id AND cars.id = liveries.carId
         ORDER BY carName, number, title");
@@ -132,7 +132,7 @@ function displayLiveries($rows)
 
         $cssClass = !array_key_exists("owned", $row) || $row["owned"] ? "thumbnail" : "thumbnailNotOwned";
 
-        echo "<div class=\"$cssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><span class=\"thumbnailText\">{$row["title"]}</span></div>";
+        echo "<div class=\"$cssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><div class=\"thumbnailText\"><span class=\"liveryTitle\">{$row["title"]}</span><span class=\"liveryDrivers\">{$row["drivers"]}</span></div></div>";
 
         $previousCarName = $carName;
     }

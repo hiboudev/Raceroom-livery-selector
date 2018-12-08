@@ -47,8 +47,12 @@
             .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); margin: 2px 2px;}
             .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid}
             .image {width: 460px; height: 230px; z-index:0;}
-            .thumbnailText {position: absolute; bottom: 16px; left: 0; width: 100%; text-align: center; color: #888; font-weight: bold; font-size: 90%; z-index:1}
-            .thumbnail:hover .thumbnailText {color: #666;}
+            .thumbnailText {position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; z-index:1}
+
+            .liveryTitle {font-weight: bold; display: block; margin-bottom: 2px; color: #666}
+            .thumbnail:hover .liveryTitle {color: #444;}
+            .liveryDrivers{display: block; font-size: 80%; color: #888; font-style: italic}
+            .thumbnail:hover .liveryDrivers {color: #666;}
 
             .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fafafa; margin: 2px 2px; opacity: 0.5;}
             .thumbnailNotOwned:hover {opacity: 1}

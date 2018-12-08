@@ -3,18 +3,54 @@
 write("PHP version: " . phpversion());
 mysqli_report(MYSQLI_REPORT_STRICT);
 
-$json = downloadFile();
-$db   = getDatabaseConnection();
-fillDatabase($db, $json);
+$db = getDatabaseConnection();
+fillDatabase($db, getStoreCarList(), getLiveryDriverList());
 $db->close();
 
 write("Finished!");
 
-function downloadFile()
+function getLiveryDriverList()
 {
-    write("Downloading file...");
+    write("Downloading driver list...");
+
+    $url               = "https://raw.githubusercontent.com/sector3studios/r3e-spectator-overlay/master/r3e-data.json";
+    $fileContent       = file_get_contents($url);
+    $driversByLiveryId = [];
+
+    if ($fileContent !== false) {
+        // Removing invalid ';' at end of json.
+        $fileContent = preg_replace("/;\s*$/", '', $fileContent);
+        $json        = json_decode($fileContent, true);
+
+        if ($json != null) {
+            foreach ($json['liveries'] as $livery) {
+                $liveryId = intval($livery['Id']);
+                $drivers  = "";
+
+                foreach ($livery['drivers'] as $driver) {
+                    if ($drivers != "") {
+                        $drivers .= ", ";
+                    }
+                    $drivers .= "{$driver['Forename']} {$driver['Surname']}";
+                }
+                $driversByLiveryId[$liveryId] = $drivers;
+            }
+        } else {
+            write("Error parsing JSON from URL: $url");
+        }
+    } else {
+        write("Error getting file from URL: $url");
+    }
+
+    return $driversByLiveryId;
+}
+
+function getStoreCarList()
+{
+    write("Downloading store car list...");
     $filePath = "../tempFiles/store_cars_" . uniqid() . ".json";
 
+    // TODO utiliser directement file_get_content()
     if (!copy("http://game.raceroom.com/store/cars/?json", $filePath)) {
         die("Can't copy file.");
     }
@@ -34,13 +70,13 @@ function downloadFile()
     return $json;
 }
 
-function fillDatabase($db, $json)
+function fillDatabase($db, $storeCarList, $liveryDriverList)
 {
     write("Feeding database...");
 
     $classes = array();
 
-    foreach ($json["context"]["c"]["sections"][0]["items"] as $itemKey => $itemValue) {
+    foreach ($storeCarList["context"]["c"]["sections"][0]["items"] as $itemKey => $itemValue) {
 
         if ($itemValue["type"] == "car") {
             // actually there's only 'car' type in json
@@ -63,7 +99,7 @@ function fillDatabase($db, $json)
 
             foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
 
-                $liveryId    = $liveryValue["cid"];
+                $liveryId    = intval($liveryValue["cid"]);
                 $liveryTitle = $liveryValue["title"];
                 $imageUrl    = $liveryValue["thumb"];
                 $isFree      = $liveryValue["free"] == true ? 1 : 0;
@@ -74,8 +110,10 @@ function fillDatabase($db, $json)
                     $liveryNumber = $matches[1];
                 }
 
-                query($db, "INSERT INTO liveries (id, title, carId, classId, number, imageUrl, isFree)
-                            VALUES ($liveryId, \"$liveryTitle\", $carId, $classId, $liveryNumber, \"$imageUrl\", $isFree);");
+                $drivers = array_key_exists($liveryId, $liveryDriverList) ? $liveryDriverList[$liveryId] : "";
+
+                query($db, "INSERT INTO liveries (id, title, carId, classId, number, imageUrl, isFree, drivers)
+                            VALUES ($liveryId, \"$liveryTitle\", $carId, $classId, $liveryNumber, \"$imageUrl\", $isFree, \"$drivers\");");
             }
         }
     }
@@ -121,7 +159,7 @@ function createDatabase($connection, $dbName)
         CREATE TABLE cars (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));
         CREATE TABLE classes (id INT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(id));
         CREATE TABLE liveries (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, classId INT NOT NULL, number INT NOT NULL,
-                                imageUrl TEXT NOT NULL, isFree INT NOT NULL, PRIMARY KEY(id));
+                                imageUrl TEXT NOT NULL, isFree INT NOT NULL, drivers TEXT NOT NULL, PRIMARY KEY(id));
         CREATE TABLE users (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));
         CREATE TABLE userLiveries (userId INT NOT NULL, liveryId INT NOT NULL);
     ");
