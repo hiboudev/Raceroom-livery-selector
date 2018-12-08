@@ -3,8 +3,11 @@
 write("PHP version: " . phpversion());
 mysqli_report(MYSQLI_REPORT_STRICT);
 
+$storeCarList     = getStoreCarList();
+$liveryDriverList = getLiveryDriverList();
+
 $db = getDatabaseConnection();
-fillDatabase($db, getStoreCarList(), getLiveryDriverList());
+fillDatabase($db, $storeCarList, $liveryDriverList);
 $db->close();
 
 write("Finished!");
