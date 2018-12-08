@@ -44,7 +44,8 @@
             .carName:not(:first-child) {margin-top: 40px;}
 
             .thumbnailContainer {text-align:center; margin: 0 auto; }
-            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); margin: 2px 2px;}
+
+            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); /*margin: 2px 2px;*/}
             .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid}
             .image {width: 460px; height: 230px; z-index:0;}
 
