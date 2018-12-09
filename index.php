@@ -17,6 +17,14 @@
         <script src="js/urlTools.js"></script>
         <script src="js/ajaxManager.js"></script>
         <script src="js/yall-2.1.0.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                yall({
+                    observeChanges: true,
+                    observeRootSelector: '.thumbnailContainer',
+                });
+            });
+        </script>
 
 
         <style>
@@ -236,7 +244,7 @@
                                                 data: "dataType=carLiveries&carId=" + carId + "&username=" + globalUsername,
                                                 success: function(result) {
                                                     $("#thumbnailContainer").html(result);
-                                                    yall();
+                                                    checkYall();
                                                 }
                                             }
                                         );
@@ -253,10 +261,14 @@
                                                 data: "dataType=classLiveries&classId=" + classId + "&username=" + globalUsername,
                                                 success: function(result) {
                                                     $("#thumbnailContainer").html(result);
-                                                    yall();
+                                                    checkYall();
                                                 }
                                             }
                                         );
+            }
+
+            function checkYall() {
+                if (!window.MutationObserver) yall();
             }
 
             function copyLink(link) {
