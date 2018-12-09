@@ -45,17 +45,27 @@
 
             .thumbnailContainer {text-align:center; margin: 0 auto; }
 
-            .thumbnail {position: relative; display: inline-block; cursor: pointer; width: 460px; height: 230px; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); border-bottom: 1px solid transparent; margin-bottom: 10px;}
+            .thumbnail {position: relative; display: inline-block; cursor: pointer; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); border-bottom: 1px solid transparent; margin-bottom: 10px;}
             .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid;}
-            .image {width: 460px; height: 230px; z-index:0;}
+
+            .image {z-index:0;}
+            @media screen and (max-width: 460px) {
+                .image {max-width: 100%;}
+            }
+            @media screen and (min-width: 461px) {
+                .image {width: 460px; height: 230px;}
+            }
 
             .thumbnailText {position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; z-index:1;}
+            @media screen and (max-width: 460px) {
+                .thumbnailText {bottom: 0px; font-size: 80%}
+            }
             .liveryTitle {font-weight: bold; display: block; margin-bottom: 2px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
             .thumbnail:hover .liveryTitle {color: #444;}
             .liveryDrivers{display: block; font-size: 80%; color: #888; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
             .thumbnail:hover .liveryDrivers {color: #666;}
 
-            .thumbnailNotOwned {position: relative; display: inline-block; width: 460px; height: 230px; background-color: #fafafa; margin: 2px 2px; opacity: 0.5;}
+            .thumbnailNotOwned {position: relative; display: inline-block; background-color: #fafafa; opacity: 0.5; border-bottom: 1px solid transparent; margin-bottom: 10px;}
             .thumbnailNotOwned:hover {opacity: 1}
             .thumbnailNotOwned .thumbnailText {color:#777;}
 
