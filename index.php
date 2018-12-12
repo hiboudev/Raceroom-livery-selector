@@ -16,18 +16,28 @@
         <script src="js/letsCook.js"></script>
         <script src="js/urlTools.js"></script>
         <script src="js/ajaxManager.js"></script>
-        <script src="js/yall-2.1.0.min.js"></script>
+        <script src="js/yallext-1.0.0.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 yall({
                     observeChanges: true,
                     observeRootSelector: '.thumbnailContainer',
+                    threshold: 200,
                 });
             });
         </script>
 
 
         <style>
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
             html {font-family: sans-serif; font-size: 90%; background-color:#fafafa }
             body {margin: 0px;}
 
@@ -47,16 +57,17 @@
             .username:hover {text-decoration:underline; color:#313da1;}
             .notification {background-color: #397fbf; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
 
-            .carName {color: #444; padding-top: 15px; padding-bottom: 8px; background-image: linear-gradient(to bottom, #eaeaea, #fafafa); border-top: 1px solid #aaa;}
+            .carName {color: #444; padding-top: 15px; padding-bottom: 8px; background-image: linear-gradient(to bottom, #eaeaea, #fafafa); border-top: 1px solid #aaa; animation: fadeIn .3s ease-in-out;}
             .carName:first-child {margin-top: 0px}
             .carName:not(:first-child) {margin-top: 38px;}
 
             .thumbnailContainer {text-align:center; margin: 0 auto; }
 
-            .thumbnail {position: relative; display: inline-block; cursor: pointer; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); border-bottom: 1px solid transparent; margin-bottom: 10px; transition: border 0.3s}
+            .thumbnail {position: relative; display: inline-block; cursor: pointer; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); border-bottom: 1px solid transparent; margin-bottom: 10px; transition: border 0.3s; animation: fadeIn .3s ease-in-out;}
             .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid;}
 
-            .image {z-index:0;}
+            .image {z-index:0; opacity: 0}
+            .image.loaded {animation: fadeIn 0.3s ease-in-out; opacity: 1}
             @media screen and (max-width: 460px) {
                 .image {max-width: 100%;}
             }
