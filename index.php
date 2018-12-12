@@ -67,7 +67,7 @@
             .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid;}
 
             .image {z-index:0; opacity: 0}
-            .image.loaded {animation: fadeIn 0.3s ease-in-out; opacity: 1}
+            .image.loaded { opacity: 1; animation: fadeIn 0.3s ease-in-out;}
             @media screen and (max-width: 460px) {
                 .image {max-width: 100%;}
             }
