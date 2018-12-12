@@ -11,6 +11,36 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <?php include "r3e_db_api.php";?>
+        <script>
+            function detectIE() {
+                var ua = window.navigator.userAgent;
+
+                var msie = ua.indexOf('MSIE ');
+                if (msie > 0) {
+                    // IE 10 or older => return version number
+                    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+                }
+
+                var trident = ua.indexOf('Trident/');
+                if (trident > 0) {
+                    // IE 11 => return version number
+                    var rv = ua.indexOf('rv:');
+                    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+                }
+
+                // var edge = ua.indexOf('Edge/');
+                // if (edge > 0) {
+                //     // Edge (IE 12+) => return version number
+                //     return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+                // }
+
+                // other browser
+                return false;
+            }
+            if(detectIE() !== false) {
+                alert("Le navigateur Internet Explorer n'est plus supporté, veuillez passer à un navigateur plus récent.");
+            }
+        </script>
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/jquery.blockUI.min.js"></script>
         <script src="js/letsCook.js"></script>
@@ -22,7 +52,7 @@
                 yall({
                     observeChanges: true,
                     observeRootSelector: '.thumbnailContainer',
-                    threshold: 200,
+                    threshold: 500,
                 });
             });
         </script>
