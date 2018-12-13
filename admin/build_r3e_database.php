@@ -157,7 +157,7 @@ function createDatabase($db, $dbName)
     query($db, "CREATE TABLE liveries       (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, classId INT NOT NULL, number INT NOT NULL,
                                                 imageUrl TEXT NOT NULL, isFree INT NOT NULL, drivers TEXT NOT NULL, PRIMARY KEY(id));");
     query($db, "CREATE TABLE users          (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
-    query($db, "CREATE TABLE userLiveries   (userId INT NOT NULL, liveryId INT NOT NULL);");
+    query($db, "CREATE TABLE userLiveries   (userId INT NOT NULL, liveryId INT NOT NULL, PRIMARY KEY(userId, liveryId));");
 }
 
 function emptyDatabase($db, $dbName)
