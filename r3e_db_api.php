@@ -5,6 +5,7 @@ if (!isset($_GET['dataType'])) {
 }
 
 $dataType = $_GET['dataType'];
+$username = isset($_GET['username']) ? $_GET['username'] : null;
 
 switch ($dataType) {
     case "cars":
@@ -18,14 +19,14 @@ switch ($dataType) {
         if (!isset($_GET['carId'])) {
             die("Bad request.");
         }
-        getLiveries($_GET['carId'], $_GET['username']);
+        getLiveries($_GET['carId'], $username);
         break;
 
     case "classLiveries":
         if (!isset($_GET['classId'])) {
             die("Bad request.");
         }
-        getLiveries($_GET['classId'], $_GET['username'], true);
+        getLiveries($_GET['classId'], $username, true);
         break;
 
     default:
