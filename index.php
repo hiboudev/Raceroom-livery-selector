@@ -11,7 +11,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <?php include "r3e_db_api.php";?>
-        <script>
+        <!-- <script>
             function detectIE() {
                 var ua = window.navigator.userAgent;
 
@@ -40,13 +40,13 @@
             if(detectIE() !== false) {
                 alert("Le navigateur Internet Explorer n'est plus supporté, veuillez passer à un navigateur plus récent.");
             }
-        </script>
+        </script> -->
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/jquery.blockUI.min.js"></script>
-        <script src="js/letsCook.js"></script>
+        <script src="js/letsCook-1.0.1.js"></script>
         <script src="js/urlTools.js"></script>
-        <script src="js/ajaxManager.js"></script>
-        <script src="js/yallext-1.0.0.js"></script>
+        <script src="js/ajaxManager-1.0.1.js"></script>
+        <script src="js/yallext-1.0.0.min.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 yall({
@@ -145,7 +145,7 @@
             var ajaxManager = new AjaxManager();
 
             function onPageLoaded() {
-                var username = Cookie.getValue('username');
+                var username = CookieManager.getValue('username');
                 if(username != null && username != '')
                     checkProfile(username.trim(), displayUrlData);
                 else {
@@ -240,7 +240,10 @@
                 }
             }
 
-            function getCars(classId, handler=null) {
+            /**
+             * handler is optional (default: null), no default value for IE compatibility.
+             */
+            function getCars(classId, handler) {
                 if(classId < 0) return;
                 $("#thumbnailContainer").empty();
                 $("#carSelector").empty();
@@ -331,7 +334,10 @@
                 $('#notification').css('display', 'none');
             }
 
-            function checkProfile(username, handler=null) {
+            /**
+             * handler is optional (default: null), no default value for IE compatibility.
+             */
+            function checkProfile(username, handler) {
                 if(synchronizingProfile) return;
                 synchronizingProfile = true;
 
@@ -425,8 +431,8 @@
                                         );
             }
 
-            function setUsername (username, updateCookie=true) {
-                if (updateCookie) Cookie.setValue('username', username);
+            function setUsername (username) {
+                CookieManager.setValue('username', username);
                 globalUsername = username;
                 var loginText = username == "" ? "Aucun profil utilisé" : username;
                 $('#usernameField').html(loginText);

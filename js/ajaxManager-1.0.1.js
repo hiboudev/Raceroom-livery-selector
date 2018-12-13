@@ -1,10 +1,7 @@
-class AjaxManager {
+var AjaxManager = function () {
+    this.activeRequests = {};
 
-    constructor () {
-        this.activeRequests = {};
-    }
-
-    executeAjax (type, params) {
+    this.executeAjax = function (type, params) {
         this.abortActiveRequest(type);
 
         var completeFunction = params['complete'];
@@ -18,22 +15,23 @@ class AjaxManager {
         this.activeRequests[type] = $.ajax(params);
     }
 
-    abortActiveRequest (type) {
+    this.abortActiveRequest = function (type) {
         if (this.activeRequests.hasOwnProperty(type)) {
             this.activeRequests[type].abort();
             delete this.activeRequests[type];
         }
     }
 
-    abortAll () {
-        for(var type in this.activeRequests)
+    this.abortAll = function () {
+        for (var type in this.activeRequests)
             this.abortActiveRequest(type);
     }
-}
+};
 
-class RequestType {
-    static get PROFILE_CHECK () {return 1;}
-    static get PROFILE_SYNC () {return 2;}
-    static get GET_CARS () {return 3;}
-    static get GET_LIVERIES () {return 4;}
+
+var RequestType = {
+    PROFILE_CHECK: 1,
+    PROFILE_SYNC: 2,
+    GET_CARS: 3,
+    GET_LIVERIES: 4
 }
