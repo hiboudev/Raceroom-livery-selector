@@ -15,7 +15,7 @@ a:link {color:#397fbf}
 a:hover {color:#0063bf}
 a:active {color:#1c30c9}
 
-.header {box-sizing: border-box; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
+.header {box-sizing: border-box; position: fixed/* added to support older browsers */; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
 .homeImage {width:20px; height:20px; float:left; margin-right:8px; margin-top:7px}
 select {width: 300px; margin: 1px}
 .listPrompt {font-style: italic; color: #999;}
