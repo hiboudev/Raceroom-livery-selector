@@ -19,7 +19,7 @@
         <script src="js/urlTools.js"></script>
         <script src="js/ajaxManager-1.0.1.js"></script>
         <script src="js/yallext-1.0.0.min.js"></script>
-        <script src="js/liverySelector-1.0.1.js"></script>
+        <script src="js/liverySelector-1.0.2.js"></script>
     </head>
 
     <body onLoad="onPageLoaded()">

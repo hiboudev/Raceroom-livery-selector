@@ -155,6 +155,8 @@ function getCarLiveries(carId) {
                 // empty() seems to fix a bug in IE11 (not displaying images except on first page)
                 $("#thumbnailContainer").empty();
                 $("#thumbnailContainer").html(result);
+                // Since we don't empty content before to do request, scroll is not reseted.
+                window.scrollTo(0, 0);
                 checkYall();
             }
         }
@@ -173,6 +175,8 @@ function getClassLiveries(classId) {
                 // empty() seems to fix a bug in IE11 (not displaying images except on first page)
                 $("#thumbnailContainer").empty();
                 $("#thumbnailContainer").html(result);
+                // Since we don't empty content before to do request, scroll is not reseted.
+                window.scrollTo(0, 0);
                 checkYall();
             }
         }
