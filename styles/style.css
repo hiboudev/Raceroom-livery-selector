@@ -15,7 +15,7 @@ a:link {color:#397fbf}
 a:hover {color:#0063bf}
 a:active {color:#1c30c9}
 
-.header {box-sizing: border-box; position: fixed/* added to support older browsers */; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
+.header {box-sizing: border-box; position: sticky; overflow: auto; padding: 7px 7px; background-color: #ddd; width: 100%; top: 0; z-index: 999;}
 .homeImage {width:20px; height:20px; float:left; margin-right:8px; margin-top:7px}
 select {width: 300px; margin: 1px}
 .listPrompt {font-style: italic; color: #999;}
@@ -26,17 +26,17 @@ select {width: 300px; margin: 1px}
 .username:hover {text-decoration:underline; color:#313da1;}
 .notification {background-color: #397fbf; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
 
-.carName {color: #444; padding-top: 15px; padding-bottom: 8px; background-image: linear-gradient(to bottom, #eaeaea, #fafafa); border-top: 1px solid #aaa; animation: fadeIn .1s ease-out;}
+.carName {color: #444; padding-top: 15px; padding-bottom: 8px; background-image: linear-gradient(to bottom, #eaeaea, #fafafa); border-top: 1px solid #aaa; animation: fadeIn .2s ease-in-out;}
 .carName:first-child {margin-top: 0px}
 .carName:not(:first-child) {margin-top: 38px;}
 
 .thumbnailContainer {text-align:center; margin: 0 auto; }
 
-.thumbnail {position: relative; display: inline-block; cursor: pointer; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); border-bottom: 1px solid transparent; margin-bottom: 10px; transition: border 0.3s; animation: fadeIn .3s ease-out;}
+.thumbnail {position: relative; display: inline-block; cursor: pointer; background-image: linear-gradient(to top, #fafafa, #cecece 20%, #fafafa 87%); border-bottom: 1px solid transparent; margin-bottom: 10px; transition: border 0.2s ease-out; animation: fadeIn 0.2s ease-in-out;}
 .thumbnail:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid;}
 
 .image {z-index:0; opacity: 0}
-.image.loaded { opacity: 1; animation: fadeIn 0.22s ease-out;}
+.image.loaded { opacity: 1; animation: fadeIn 0.22s ease-in-out;}
 @media screen and (max-width: 460px) {
     .image {max-width: 100%;}
 }
@@ -48,12 +48,12 @@ select {width: 300px; margin: 1px}
 @media screen and (max-width: 460px) {
     .thumbnailText {bottom: 0px; font-size: 80%}
 }
-.liveryTitle {font-weight: bold; display: block; margin-bottom: 2px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s}
+.liveryTitle {font-weight: bold; display: block; margin-bottom: 2px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s ease-in-out;}
 .thumbnail:hover .liveryTitle {color: #444;}
-.liveryDrivers{display: block; font-size: 80%; color: #888; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s}
+.liveryDrivers{display: block; font-size: 80%; color: #888; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s ease-in-out;}
 .thumbnail:hover .liveryDrivers {color: #666;}
 
-.thumbnailNotOwned {position: relative; display: inline-block; background-color: #fafafa; opacity: 0.5; border-bottom: 1px solid transparent; margin-bottom: 10px; transition: opacity 0.3s}
+.thumbnailNotOwned {position: relative; display: inline-block; background-color: #fafafa; opacity: 0.5; border-bottom: 1px solid transparent; margin-bottom: 10px; transition: opacity 0.3s ease-in-out;}
 .thumbnailNotOwned:hover {opacity: 1}
 .thumbnailNotOwned .thumbnailText {color:#777;}
 
