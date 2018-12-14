@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-		<link rel="icon" type="image/png" href="images/favicon.png" />
+        <link rel="icon" type="image/png" href="images/favicon.png" />
 
         <title>Sélecteur de livrée Raceroom</title>
         <meta name="description" content="Sélectionnez une livrée Raceroom pour l'intégrer sur un forum." />

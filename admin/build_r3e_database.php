@@ -149,7 +149,7 @@ function createDatabase($db, $dbName)
 {
     write("Creating database...");
 
-    query($db, "CREATE DATABASE IF NOT EXISTS $dbName");
+    query($db, "CREATE DATABASE IF NOT EXISTS $dbName character set UTF8 collate utf8_bin");
     query($db, "USE $dbName;");
 
     query($db, "CREATE TABLE cars           (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, PRIMARY KEY(id));");
