@@ -152,6 +152,8 @@ function getCarLiveries(carId) {
             url: "r3e_db_api.php",
             data: "dataType=carLiveries&carId=" + carId + "&username=" + globalUsername,
             success: function (result) {
+                // empty() seems to fix a bug in IE11 (not displaying images except on first page)
+                $("#thumbnailContainer").empty();
                 $("#thumbnailContainer").html(result);
                 checkYall();
             }
@@ -168,6 +170,8 @@ function getClassLiveries(classId) {
             url: "r3e_db_api.php",
             data: "dataType=classLiveries&classId=" + classId + "&username=" + globalUsername,
             success: function (result) {
+                // empty() seems to fix a bug in IE11 (not displaying images except on first page)
+                $("#thumbnailContainer").empty();
                 $("#thumbnailContainer").html(result);
                 checkYall();
             }
