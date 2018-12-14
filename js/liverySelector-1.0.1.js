@@ -112,7 +112,6 @@ function initializeLoginBox() {
  */
 function getCars(classId, handler) {
     if (classId < 0) return;
-    $("#thumbnailContainer").empty();
     $("#carSelector").empty();
 
     ajaxManager.executeAjax(RequestType.GET_CARS,
@@ -146,7 +145,6 @@ function carSelected(carId) {
 
 function getCarLiveries(carId) {
     if (carId < 0) return;
-    $("#thumbnailContainer").empty();
 
     ajaxManager.executeAjax(RequestType.GET_LIVERIES,
         {
@@ -163,7 +161,6 @@ function getCarLiveries(carId) {
 
 function getClassLiveries(classId) {
     if (classId < 0) return;
-    $("#thumbnailContainer").empty();
 
     ajaxManager.executeAjax(RequestType.GET_LIVERIES,
         {

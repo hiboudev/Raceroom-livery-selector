@@ -131,9 +131,9 @@ function displayLiveries($rows)
             echo "<h3 class=\"carName\">$carName</h3>";
         }
 
-        $cssClass = !array_key_exists("owned", $row) || $row["owned"] ? "thumbnail" : "thumbnailNotOwned";
+        $ownedCssClass = !array_key_exists("owned", $row) || $row["owned"] ? "owned" : "notOwned";
 
-        echo "<div class=\"$cssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><div class=\"thumbnailText\"><span class=\"liveryTitle\">{$row["title"]}</span><span class=\"liveryDrivers\">{$row["drivers"]}</span></div></div>";
+        echo "<div class=\"thumbnail $ownedCssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><div class=\"thumbnailText\"><span class=\"liveryTitle\">{$row["title"]}</span><span class=\"liveryDrivers\">{$row["drivers"]}</span></div></div>";
 
         $previousCarName = $carName;
     }

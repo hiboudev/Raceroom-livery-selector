@@ -10,7 +10,7 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" type="text/css" href="styles/style-1.0.0.css">
+        <link rel="stylesheet" type="text/css" href="styles/style-1.0.1.css">
 
         <?php include "r3e_db_api.php";?>
         <script src="js/jquery-3.3.1.min.js"></script>
@@ -19,7 +19,7 @@
         <script src="js/urlTools.js"></script>
         <script src="js/ajaxManager-1.0.1.js"></script>
         <script src="js/yallext-1.0.0.min.js"></script>
-        <script src="js/liverySelector-1.0.0.js"></script>
+        <script src="js/liverySelector-1.0.1.js"></script>
     </head>
 
     <body onLoad="onPageLoaded()">
