@@ -7,7 +7,7 @@ if (isset($_GET['username'])) {
 }
 
 /**
- * Print (all strings):
+ * Returns:
  * - 0: registered user.
  * - 1: not registered user.
  */
@@ -21,7 +21,7 @@ function checkUsername($username)
 }
 
 /**
- * Print (all strings):
+ * Returns:
  * - username if valid.
  * - 1: profile not found on R3E store
  * - 2: error reading downloaded profile file
