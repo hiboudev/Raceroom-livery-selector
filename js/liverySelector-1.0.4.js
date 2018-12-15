@@ -1,3 +1,5 @@
+history.scrollRestoration = "manual";
+
 var timeoutId = -1;
 var synchronizingProfile = false;
 var globalUsername = null;
