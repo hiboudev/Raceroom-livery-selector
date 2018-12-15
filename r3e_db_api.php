@@ -10,27 +10,27 @@ $username = isset($_GET['username']) ? $_GET['username'] : null;
 switch ($dataType) {
     case "cars":
         if (!isset($_GET['classId'])) {
-            die("Bad request.");
+            exit("Bad request.");
         }
         getCars($_GET['classId']);
         break;
 
     case "carLiveries":
         if (!isset($_GET['carId'])) {
-            die("Bad request.");
+            exit("Bad request.");
         }
         getLiveries($_GET['carId'], $username);
         break;
 
     case "classLiveries":
         if (!isset($_GET['classId'])) {
-            die("Bad request.");
+            exit("Bad request.");
         }
         getLiveries($_GET['classId'], $username, true);
         break;
 
     default:
-        die("Bad request.");
+        exit("Bad request.");
 }
 
 function getClasses()
@@ -160,15 +160,10 @@ function getDatabase()
 
     $db = new mysqli($dbAddress, $dbUserName, $dbPassword);
     if ($db->connect_error) {
-        die("Connection failed: " . $db->connect_error);
+        exit("Connection failed: " . $db->connect_error);
     }
 
     $db->query("USE $dbName");
 
     return $db;
-}
-
-function write($text)
-{
-    echo $text . "<br />";
 }

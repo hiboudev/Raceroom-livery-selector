@@ -38,19 +38,19 @@ function synchronizeUserProfile($username)
     foreach ($json["context"]["c"]["purchased_content"] as $contentKey => $contentValue) {
         foreach ($contentValue["items"] as $itemKey => $itemValue) {
             if ($itemValue["type"] == "livery") {
-                $connection->query("INSERT into userLiveries VALUES ({$userId}, {$itemValue["id"]});");
+                $connection->query("INSERT into userLiveries VALUES ($userId, {$itemValue["id"]});");
             }
         }
     }
 
     $connection->close();
 
-    exit($username); // Réponse pour JS
+    exit($username);
 }
 
 function downloadUserProfile($username)
 {
-    $fileContent = file_get_contents("http://game.raceroom.com/users/{$username}/purchases?json");
+    $fileContent = file_get_contents("http://game.raceroom.com/users/$username/purchases?json");
     if ($fileContent === false) {
         exit('2');
     }
@@ -67,29 +67,24 @@ function getDatabaseConnection()
 {
     require_once "auth.php";
     $connection = new mysqli($dbAddress, $dbUserName, $dbPassword);
-    $connection->query("USE {$dbName};");
+    $connection->query("USE $dbName;");
 
     return $connection;
 }
 
 function userExists($connection, $username)
 {
-    return $connection->query("SELECT id FROM users WHERE name='{$username}';")->num_rows == 1;
+    return $connection->query("SELECT id FROM users WHERE name='$username';")->num_rows == 1;
 }
 
 function checkUserExists($connection, $username)
 {
-    $result = $connection->query("SELECT id FROM users WHERE name='{$username}';");
+    $result = $connection->query("SELECT id FROM users WHERE name='$username';");
 
     if ($result->num_rows == 0) {
-        $connection->query("INSERT INTO users (name) VALUES ('{$username}');");
+        $connection->query("INSERT INTO users (name) VALUES ('$username');");
         $result = $connection->query("SELECT LAST_INSERT_ID();");
     }
 
     return $result->fetch_array()[0];
-}
-
-function write($text)
-{
-    echo $text . "<br />";
 }

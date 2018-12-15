@@ -56,12 +56,12 @@ function getStoreCarList()
     $fileContent = file_get_contents($url);
 
     if ($fileContent === false) {
-        die("Unable to open URL: $url");
+        exit("Unable to open URL: $url");
     }
 
     $json = json_decode($fileContent, true);
     if ($json == null) {
-        die("Can't parse json from URL: $url");
+        exit("Can't parse json from URL: $url");
     }
 
     return $json;
@@ -94,7 +94,7 @@ function fillDatabase($db, $storeCarList, $liveryDriverList)
             query($db, "INSERT INTO cars (id, name, classId)
                         VALUES ($carId,'$carName',$classId);");
 
-            foreach ($itemValue["content_info"]["livery_images"] as $liveryKey => $liveryValue) {
+            foreach ($itemValue["content_info"]["livery_images"] as $liveryValue) {
 
                 $liveryId    = intval($liveryValue["cid"]);
                 $liveryTitle = $liveryValue["title"];
@@ -124,11 +124,11 @@ function getDatabaseConnection()
         $db = new mysqli($dbAddress, $dbUserName, $dbPassword);
     } catch (Exception $e) {
         var_dump($e);
-        die("Can't connect to database.");
+        exit("Can't connect to database.");
     }
 
     if ($db->connect_error) {
-        die("Connection failed: " . $db->connect_error);
+        exit("Connection failed: " . $db->connect_error);
     }
 
     if (!databaseExists($db, $dbName)) {
@@ -175,7 +175,7 @@ function query($db, $sql)
     $result = $db->query($sql);
 
     if (!$result) {
-        die("ERROR: " . $db->error);
+        exit("ERROR: " . $db->error);
     }
 
     return $result;
