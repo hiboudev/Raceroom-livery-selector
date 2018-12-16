@@ -10,7 +10,7 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" type="text/css" href="styles/style-1.0.6.css">
+        <link rel="stylesheet" type="text/css" href="styles/style-1.0.7.css">
 
         <?php include "r3e_db_api.php";?>
         <script src="js/jquery-3.3.1.min.js"></script>
@@ -42,7 +42,7 @@
             <div class="splash">
 				<img src="images/favicon.png" />
                 <h1 class="title">Sélecteur de livrée Raceroom</h1>
-                <div><p><b>Choisissez une classe et une voiture, cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p><p>Certaines classes, voitures et livrées "spéciales" ne sont pas ou plus achetables, elles sont en <i>italique</i> dans les listes et estampillées d'un <span class="special"></span> dans les livrées.</p></div>
+                <div><p><b>Choisissez une classe et une voiture, cliquez une image et le lien sera copié dans le presse-papier, puis collez-le dans votre message du forum.</b><p>Si vous entrez votre nom de profil Raceroom, les livrées que vous possédez seront mises en avant. Il sera sauvegardé pour vos prochaines visites.</p><p>Certaines classes, voitures et livrées "spéciales" ne sont pas ou plus achetables, elles sont en <span class="specialGrey">grisé</span> dans les listes et estampillées d'un <span class="special"></span> dans les livrées.</p></div>
                 <div id="loginBox" class="loginBox">
                     <span id="loggedPrompt" class="loggedPrompt"></span>
                     <button id="resyncButton" onClick="resyncClicked()">Resynchroniser</button>

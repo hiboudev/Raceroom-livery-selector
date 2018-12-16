@@ -81,7 +81,8 @@ select {width: 300px; margin: 1px}
     .image {width: 460px; height: 230px; margin: 0 7px; /*Max 7px so we display 4 liveries per row for screen 1920px*/}
 }
 
-option.special {font-style: italic;}
+.specialGrey {color: #888}
+option.special {color: #888}
 .thumbnail .special:after,
 .carName .special:after,
 .splash .special:after {content:"S"; background-color: #dcdcdc; color: #fafafa; font-weight: bold;
