@@ -86,13 +86,13 @@ option.special {color: #888}
 .thumbnail .special:after,
 .carName .special:after,
 .splash .special:after {content:"S"; background-color: #dcdcdc; color: #fafafa; font-weight: bold;
-    width: 14px; height: 14px; border-radius: 50%; font-size: 12px; display: inline-block; text-align: center; padding: 2px; 
-    
+    width: 14px; height: 14px; border-radius: 50%; font-size: 12px; display: inline-block; text-align: center; padding: 2px;
 }
-.carName .special, .thumbnail.notOwned .special, .splash .special {cursor: default;}
-
 .thumbnail .special:after {position:absolute; right: 6px; bottom: 4px; z-index:2;}
 .carName .special:after {margin-left: 1em; }
+
+.carName .special, .thumbnail.notOwned .special, .splash .special {cursor: default;}
+
 
 
 .splash {position: relative; top: 20px; color:#444}
