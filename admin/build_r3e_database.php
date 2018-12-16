@@ -23,7 +23,8 @@ function getSecondaryJson()
 {
     write("Downloading secondary json...");
 
-    $url         = "https://raw.githubusercontent.com/sector3studios/r3e-spectator-overlay/master/r3e-data.json";
+    // $url         = "https://raw.githubusercontent.com/sector3studios/r3e-spectator-overlay/master/r3e-data.json";
+    $url         = "https://raw.githubusercontent.com/hiboudev/r3e-spectator-overlay/master/r3e-data.json";
     $fileContent = file_get_contents($url);
     $json        = null;
 
@@ -55,7 +56,7 @@ function getSecondaryData()
 
             $secondaryData->classes[$classId] = new CarClass(
                 $classId,
-                $classItem['Name']
+                trim($classItem['Name'])
             );
         }
 
@@ -64,7 +65,7 @@ function getSecondaryData()
 
             $secondaryData->cars[$carId] = new Car(
                 $carId,
-                $carItem['Name'],
+                trim($carItem['Name']),
                 intval($carItem['Class'])
             );
         }
@@ -76,12 +77,12 @@ function getSecondaryData()
                 if ($drivers != "") {
                     $drivers .= ", ";
                 }
-                $drivers .= "{$driver['Forename']} {$driver['Surname']}";
+                $drivers .= trim($driver['Forename']) . " " . trim($driver['Surname']);
             }
 
             $liveryId   = intval($liveryItem['Id']);
-            $teamName   = $liveryItem['TeamName'];
-            $liveryName = $liveryItem['Name'];
+            $teamName   = trim($liveryItem['TeamName']);
+            $liveryName = trim($liveryItem['Name']);
             $imageUrl   = getImageUrl($liveryId, $teamName, $liveryName);
 
             $secondaryData->liveries[$liveryId] = new Livery(
@@ -250,7 +251,7 @@ function createDatabase($db, $dbName)
 {
     write("Creating database...");
 
-    query($db, "CREATE DATABASE IF NOT EXISTS $dbName character set UTF8 collate utf8_bin");
+    query($db, "CREATE DATABASE IF NOT EXISTS $dbName character set utf8mb4 COLLATE utf8mb4_unicode_ci;");
     query($db, "USE $dbName;");
 
     query($db, "CREATE TABLE classes        (id INT NOT NULL, name TEXT NOT NULL, fromShop BOOLEAN NOT NULL, PRIMARY KEY(id));");

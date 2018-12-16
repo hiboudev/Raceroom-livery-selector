@@ -61,7 +61,7 @@ select {width: 300px; margin: 1px}
 .thumbnail.owned:hover {background-image: linear-gradient(to top, #e0e0e0, #cdcdcd 20%, #fafafa 87%); border-bottom: 1px #aaa solid;}
 .thumbnail.notOwned:hover {opacity: 1}
 
-.thumbnailText {position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; z-index:1;}
+.thumbnailText {position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; z-index:2;}
 @media screen and (max-width: 460px) {
     .thumbnailText {bottom: 0px; font-size: 80%}
 }
@@ -73,7 +73,7 @@ select {width: 300px; margin: 1px}
 .thumbnail.owned:hover .liveryDrivers {color: #666;}
 
 .image {z-index:0; opacity: 0;}
-.image.loaded { opacity: 1; animation: zoom 0.22s ease-in-out;}
+.image.loaded {opacity: 1; animation: zoom 0.22s ease-in-out;}
 @media screen and (max-width: 460px) {
     .image {max-width: 100%;}
 }
@@ -81,14 +81,14 @@ select {width: 300px; margin: 1px}
     .image {width: 460px; height: 230px; margin: 0 7px; /*Max 7px so we display 4 liveries per row for screen 1920px*/}
 }
 
-option.special {color: #999}
+option.special {font-style: italic;}
 .thumbnail.special:after,
 .carName.special:after,
-.splash .special:after {content:"S"; background-color: #ccc; color: #fafafa; font-weight: bold;
+.splash .special:after {content:"S"; background-color: #dcdcdc; color: #fafafa; font-weight: bold;
     width: 14px; height: 14px; border-radius: 50%; font-size: 12px; display: inline-block; text-align: center; padding: 2px; 
 }
 
-.thumbnail.special:after {position:absolute; right: 6px; bottom: 4px; }
+.thumbnail.special:after {position:absolute; right: 6px; bottom: 4px; z-index:1;}
 .carName.special:after {margin-left: 1em; }
 
 
