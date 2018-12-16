@@ -125,21 +125,22 @@ function getAllLiveries($db, $id, $isClassId)
 
 function displayLiveries($rows)
 {
+    $specialSpan     = "<span class=\"special\" title=\"Non disponible en magasin\"></span>";
     $previousCarName = null;
 
     for ($i = 0; $i < count($rows); $i++) {
-        $row                = $rows[$i];
-        $carName            = $row['carName'];
-        $carSpecialCssClass = $row['carFromShop'] == 0 ? "special" : "";
+        $row            = $rows[$i];
+        $carName        = $row['carName'];
+        $carSpecialSpan = $row['carFromShop'] == 0 ? $specialSpan : "";
 
         if ($carName != $previousCarName) {
-            echo "<h3 class=\"carName $carSpecialCssClass\">$carName</h3>";
+            echo "<h3 class=\"carName\">$carName$carSpecialSpan</h3>";
         }
 
-        $ownedCssClass         = !array_key_exists("owned", $row) || $row["owned"] ? "owned" : "notOwned";
-        $liverySpecialCssClass = $row['fromShop'] == 0 ? "special" : "";
+        $ownedCssClass     = !array_key_exists("owned", $row) || $row["owned"] ? "owned" : "notOwned";
+        $liverySpecialSpan = $row['fromShop'] == 0 ? $specialSpan : "";
 
-        echo "<div class=\"thumbnail $ownedCssClass $liverySpecialCssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><div class=\"thumbnailText\"><span class=\"liveryTitle\">{$row["title"]}</span><span class=\"liveryDrivers\">{$row["drivers"]}</span></div></div>";
+        echo "<div class=\"thumbnail $ownedCssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><div class=\"thumbnailText\"><span class=\"liveryTitle\">{$row["title"]}</span><span class=\"liveryDrivers\">{$row["drivers"]}</span></div>$liverySpecialSpan</div>";
 
         $previousCarName = $carName;
     }
