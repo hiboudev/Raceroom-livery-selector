@@ -44,8 +44,10 @@ function getClasses()
     echo "<option class=\"listPrompt\" value=\"-1\">Choisissez une classe...</option>";
 
     for ($i = 0; $i < count($all); $i++) {
-        $row = $all[$i];
-        echo "<option value=\"{$row["id"]}\">{$row["name"]}</option>";
+        $row      = $all[$i];
+        $cssClass = $row['fromShop'] == 0 ? "class=\"special\"" : "";
+
+        echo "<option $cssClass value=\"{$row["id"]}\">{$row["name"]}</option>";
     }
 
     $db->close();
@@ -63,8 +65,10 @@ function getCars($classId)
         echo "<option class=\"listPrompt\" value=\"-1\">Choisissez une voiture...</option>";
 
         for ($i = 0; $i < count($all); $i++) {
-            $row = $all[$i];
-            echo "<option value=\"{$row["id"]}\">{$row["name"]}</option>";
+            $row      = $all[$i];
+            $cssClass = $row['fromShop'] == 0 ? "class=\"special\"" : "";
+
+            echo "<option $cssClass value=\"{$row["id"]}\">{$row["name"]}</option>";
         }
     } else {
         echo "";
@@ -93,7 +97,7 @@ function getUserLiveries($db, $id, $isClassId, $userId)
     $idColumnName = $isClassId ? "classId" : "carId";
 
     $result = $db->query(
-        "SELECT liveries.imageUrl, liveries.title, liveries.drivers, cars.name as carName
+        "SELECT liveries.imageUrl, liveries.title, liveries.drivers, liveries.fromShop, cars.name as carName
             , IF(liveries.isFree = 1 OR userLiveries.liveryId IS NOT NULL, TRUE, FALSE) as owned
         FROM cars, liveries
         LEFT JOIN userLiveries
@@ -110,7 +114,7 @@ function getAllLiveries($db, $id, $isClassId)
     $idColumnName = $isClassId ? "classId" : "carId";
 
     $result = $db->query(
-        "SELECT liveries.imageUrl, liveries.title, liveries.drivers, cars.name as carName
+        "SELECT liveries.imageUrl, liveries.title, liveries.drivers, liveries.fromShop, cars.name as carName
         FROM liveries, cars
         WHERE liveries.$idColumnName = $id AND cars.id = liveries.carId
         ORDER BY carName, number, title");
@@ -124,16 +128,17 @@ function displayLiveries($rows)
     $previousCarName = null;
 
     for ($i = 0; $i < count($rows); $i++) {
-        $row     = $rows[$i];
-        $carName = $row['carName'];
+        $row             = $rows[$i];
+        $carName         = $row['carName'];
+        $specialCssClass = $row['fromShop'] == 0 ? "special" : "";
 
         if ($carName != $previousCarName) {
-            echo "<h3 class=\"carName\">$carName</h3>";
+            echo "<h3 class=\"carName $specialCssClass\">$carName</h3>";
         }
 
         $ownedCssClass = !array_key_exists("owned", $row) || $row["owned"] ? "owned" : "notOwned";
 
-        echo "<div class=\"thumbnail $ownedCssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><div class=\"thumbnailText\"><span class=\"liveryTitle\">{$row["title"]}</span><span class=\"liveryDrivers\">{$row["drivers"]}</span></div></div>";
+        echo "<div class=\"thumbnail $ownedCssClass $specialCssClass\" onclick=\"copyLink('{$row['imageUrl']}')\"><img class=\"image lazy\" src=\"images/imagePlaceholder.png\" data-src=\"{$row['imageUrl']}\" /><div class=\"thumbnailText\"><span class=\"liveryTitle\">{$row["title"]}</span><span class=\"liveryDrivers\">{$row["drivers"]}</span></div></div>";
 
         $previousCarName = $carName;
     }

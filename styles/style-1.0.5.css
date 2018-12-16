@@ -81,6 +81,16 @@ select {width: 300px; margin: 1px}
     .image {width: 460px; height: 230px; margin: 0 7px; /*Max 7px so we display 4 liveries per row for screen 1920px*/}
 }
 
+option.special {color: #999}
+.thumbnail.special:after,
+.carName.special:after,
+.splash .special:after {content:"S"; background-color: #ccc; color: #fafafa; font-weight: bold;
+    width: 14px; height: 14px; border-radius: 50%; font-size: 12px; display: inline-block; text-align: center; padding: 2px; 
+}
+
+.thumbnail.special:after {position:absolute; right: 6px; bottom: 4px; }
+.carName.special:after {margin-left: 1em; }
+
 
 .splash {position: relative; top: 20px; color:#444}
 .title {color:#397fbf; }
