@@ -47,6 +47,8 @@ select {width: 300px; margin: 1px}
 .username:link {color: #666}
 .username:hover {text-decoration:underline; color:#313da1;}
 .notification {background-color: #397fbf; font-weight: bold; color:#ddd; position: absolute; right: 0; top:0.8em; margin-top: 9px; padding: 4px; display: none}
+.shopUnavailableMessage {display: none; font-style: italic; color:rgb(230, 54, 0); text-align: center; font-size: small;}
+
 
 .carName {color: #444; padding-top: 15px; padding-bottom: 8px; background-image: linear-gradient(to bottom, #eaeaea, #fafafa); border-top: 1px solid #aaa; animation: translate .3s ease-out; }
 .carName:first-child {margin-top: 0px}

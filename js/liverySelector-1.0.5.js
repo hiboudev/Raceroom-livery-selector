@@ -25,6 +25,21 @@ function onPageLoaded() {
 
     window.onpopstate = handleHistoryChange;
     window.onbeforeunload = cleanBeforeExit;
+
+    checkShopAvailability();
+}
+
+function checkShopAvailability() {
+    ajaxManager.executeAjax(RequestType.SITE_AVAILABLE,
+        {
+            type: "GET",
+            url: "http://game.raceroom.com/search",
+            data: "query=&json",
+            error: function (result) {
+                $('.shopUnavailableMessage').css('display', 'block');
+            },
+        }
+    );
 }
 
 function cleanBeforeExit() {

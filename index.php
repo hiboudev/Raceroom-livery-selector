@@ -10,16 +10,16 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" type="text/css" href="styles/style-1.0.8.css">
+        <link rel="stylesheet" type="text/css" href="styles/style-1.0.9.css">
 
         <?php include "r3e_db_api.php";?>
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/jquery.blockUI.min.js"></script>
         <script src="js/letsCook-1.0.1.js"></script>
         <script src="js/urlTools.js"></script>
-        <script src="js/ajaxManager-1.0.1.js"></script>
+        <script src="js/ajaxManager-1.0.2.js"></script>
         <script src="js/yallext-1.0.0.min.js"></script>
-        <script src="js/liverySelector-1.0.4.js"></script>
+        <script src="js/liverySelector-1.0.5.js"></script>
     </head>
 
     <body onLoad="onPageLoaded()">
@@ -36,6 +36,7 @@
                 <?php getClasses();?>
             </select>
             <select id="carSelector" onChange="carSelected(this.value)"></select>
+            <div class="shopUnavailableMessage">La boutique R3E est injoignable, les images ne pourront pas s'afficher.</div>
         </div>
 
         <div id="thumbnailContainer" class="thumbnailContainer">

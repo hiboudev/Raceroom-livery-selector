@@ -33,5 +33,6 @@ var RequestType = {
     PROFILE_CHECK: 1,
     PROFILE_SYNC: 2,
     GET_CARS: 3,
-    GET_LIVERIES: 4
+    GET_LIVERIES: 4,
+    SITE_AVAILABLE: 5
 }

@@ -138,8 +138,7 @@ function getStoreData()
                 $storeData->classes[$classId] = new CarClass($classId, $className);
             }
 
-            $carId   = intval($itemValue["cid"]);
-            $carName = $itemValue["name"];
+            $carId = intval($itemValue["cid"]);
 
             $storeData->cars[$carId] = new Car(
                 $carId,
@@ -175,12 +174,12 @@ function fillDatabase($db, $storeData, $secondaryData)
 
     foreach ($storeData->classes as $class) {
         query($db, "INSERT INTO classes (id, name, fromShop)
-                    VALUES ($class->id, '$class->name', 1);");
+                    VALUES ($class->id, \"$class->name\", 1);");
     }
 
     foreach ($storeData->cars as $car) {
         query($db, "INSERT INTO cars (id, name, classId, fromShop)
-                    VALUES ($car->id, '$car->name', $car->classId, 1);");
+                    VALUES ($car->id, \"$car->name\", $car->classId, 1);");
     }
 
     foreach ($storeData->liveries as $livery) {
@@ -193,12 +192,12 @@ function fillDatabase($db, $storeData, $secondaryData)
 
     foreach ($secondaryData->classes as $class) {
         query($db, "INSERT IGNORE INTO classes (id, name, fromShop)
-                    VALUES ($class->id, '$class->name', 0);");
+                    VALUES ($class->id, \"$class->name\", 0);");
     }
 
     foreach ($secondaryData->cars as $car) {
         query($db, "INSERT IGNORE INTO cars (id, name, classId, fromShop)
-                    VALUES ($car->id, '$car->name', $car->classId, 0);");
+                    VALUES ($car->id, \"$car->name\", $car->classId, 0);");
     }
 
     foreach ($secondaryData->liveries as $livery) {
@@ -290,8 +289,7 @@ function write($text)
 
 function getImageUrl($liveryId, $teamName, $liveryName)
 {
-    // TODO BUG : Des WTCR ne s'affichent pas. Erreur dans les id de l'url du magasin et dans un nom de team.
-    // TODO nettoyer/optimiser les substitutions
+    // TODO nettoyer/optimiser ça
     $teamName       = trim($teamName);
     $teamName       = preg_replace('/ [^A-Za-z0-9] /', '-', $teamName);
     $teamName       = str_replace(' ', '-', $teamName);
