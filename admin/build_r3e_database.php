@@ -316,6 +316,7 @@ function createCsvFile($db)
         "SELECT cars.brandName, cars.name as carName, classes.name as className, liveries.title as liveryName, liveries.imageUrl, liveries.fromShop
         FROM liveries, cars, classes
         WHERE cars.id = liveries.carId AND classes.id = liveries.classId
+        ORDER BY className, brandName, carName, liveryName
     ;");
 
     $liveries = $result->fetch_all(MYSQLI_ASSOC);
