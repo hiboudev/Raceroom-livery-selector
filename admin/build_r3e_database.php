@@ -313,7 +313,7 @@ function createCsvFile($db)
     write("Creating Csv file...");
 
     $result = query($db,
-        "SELECT cars.brandName, cars.name as carName, classes.name as className, liveries.title as liveryName, liveries.imageUrl, liveries.fromShop
+        "SELECT cars.brandName, cars.name as carName, classes.name as className, liveries.title as liveryName, liveries.imageUrl, liveries.fromShop, liveries.id as liveryId
         FROM liveries, cars, classes
         WHERE cars.id = liveries.carId AND classes.id = liveries.classId
         ORDER BY className, brandName, carName, liveryName
@@ -324,9 +324,9 @@ function createCsvFile($db)
     // UTF8 header
     $csvContent = "\xEF\xBB\xBF";
 
-    $csvContent .= "brand,car,class,livery,imageUrl,buyable\r\n";
+    $csvContent .= "id,brand,car,class,livery,buyable,imageUrl\r\n";
     foreach ($liveries as $livery) {
-        $csvContent .= "{$livery['brandName']},{$livery['carName']},{$livery['className']},{$livery['liveryName']},{$livery['imageUrl']},{$livery['fromShop']}\r\n";
+        $csvContent .= "{$livery['liveryId']},{$livery['brandName']},{$livery['carName']},{$livery['className']},{$livery['liveryName']},{$livery['fromShop']},{$livery['imageUrl']}\r\n";
     }
 
     if (file_put_contents("../liveries.csv", $csvContent) === false) {
