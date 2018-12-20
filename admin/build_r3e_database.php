@@ -12,6 +12,7 @@ try {
 
 $db = getDatabaseConnection();
 fillDatabase($db, $storeData, $secondaryData);
+createCsvFile($db);
 $db->close();
 
 write("Finished!");
@@ -66,7 +67,8 @@ function getSecondaryData()
             $secondaryData->cars[$carId] = new Car(
                 $carId,
                 trim($carItem['Name']),
-                intval($carItem['Class'])
+                intval($carItem['Class']),
+                trim($carItem['BrandName'])
             );
         }
 
@@ -143,7 +145,8 @@ function getStoreData()
             $storeData->cars[$carId] = new Car(
                 $carId,
                 $itemValue["name"],
-                $classId
+                $classId,
+                $itemValue["manufacturer"]["name"]
             );
 
             foreach ($itemValue["content_info"]["livery_images"] as $liveryValue) {
@@ -178,8 +181,8 @@ function fillDatabase($db, $storeData, $secondaryData)
     }
 
     foreach ($storeData->cars as $car) {
-        query($db, "INSERT INTO cars (id, name, classId, fromShop)
-                    VALUES ($car->id, \"$car->name\", $car->classId, 1);");
+        query($db, "INSERT INTO cars (id, name, classId, brandName, fromShop)
+                    VALUES ($car->id, \"$car->name\", $car->classId, \"$car->brandName\", 1);");
     }
 
     foreach ($storeData->liveries as $livery) {
@@ -196,8 +199,8 @@ function fillDatabase($db, $storeData, $secondaryData)
     }
 
     foreach ($secondaryData->cars as $car) {
-        query($db, "INSERT IGNORE INTO cars (id, name, classId, fromShop)
-                    VALUES ($car->id, \"$car->name\", $car->classId, 0);");
+        query($db, "INSERT IGNORE INTO cars (id, name, classId, brandName, fromShop)
+                    VALUES ($car->id, \"$car->name\", $car->classId, \"$car->brandName\", 0);");
     }
 
     foreach ($secondaryData->liveries as $livery) {
@@ -254,7 +257,7 @@ function createDatabase($db, $dbName)
     query($db, "USE $dbName;");
 
     query($db, "CREATE TABLE classes        (id INT NOT NULL, name TEXT NOT NULL, fromShop BOOLEAN NOT NULL, PRIMARY KEY(id));");
-    query($db, "CREATE TABLE cars           (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, fromShop BOOLEAN NOT NULL, PRIMARY KEY(id));");
+    query($db, "CREATE TABLE cars           (id INT NOT NULL, name TEXT NOT NULL, classId INT NOT NULL, brandName TEXT NOT NULL, fromShop BOOLEAN NOT NULL, PRIMARY KEY(id));");
     query($db, "CREATE TABLE liveries       (id INT NOT NULL, title TEXT NOT NULL, carId INT NOT NULL, classId INT NOT NULL, number INT NOT NULL,
                                                 imageUrl TEXT NOT NULL, isFree INT NOT NULL, drivers TEXT NOT NULL, fromShop BOOLEAN NOT NULL, PRIMARY KEY(id));");
     query($db, "CREATE TABLE users          (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, PRIMARY KEY(id));");
@@ -305,6 +308,31 @@ function getImageUrl($liveryId, $teamName, $liveryName)
     return "http://game.raceroom.com/r3e/assets/content/carlivery/{$teamName}-{$liveryName}-{$liveryId}-image-small.png";
 }
 
+function createCsvFile($db)
+{
+    write("Creating Csv file...");
+
+    $result = query($db,
+        "SELECT cars.brandName, cars.name as carName, classes.name as className, liveries.title as liveryName, liveries.imageUrl, liveries.fromShop
+        FROM liveries, cars, classes
+        WHERE cars.id = liveries.carId AND classes.id = liveries.classId
+    ;");
+
+    $liveries = $result->fetch_all(MYSQLI_ASSOC);
+
+    // UTF8 header
+    $csvContent = "\xEF\xBB\xBF";
+
+    $csvContent .= "brand,car,class,livery,imageUrl,buyable\r\n";
+    foreach ($liveries as $livery) {
+        $csvContent .= "{$livery['brandName']},{$livery['carName']},{$livery['className']},{$livery['liveryName']},{$livery['imageUrl']},{$livery['fromShop']}\r\n";
+    }
+
+    if (file_put_contents("../liveries.csv", $csvContent) === false) {
+        write("ERROR writing csv file!");
+    }
+}
+
 class R3eData
 {
     public $classes  = [];
@@ -329,12 +357,14 @@ class Car
     public $id;
     public $name;
     public $classId;
+    public $brandName;
 
-    public function __construct($id, $name, $classId)
+    public function __construct($id, $name, $classId, $brandName)
     {
-        $this->id      = $id;
-        $this->name    = $name;
-        $this->classId = $classId;
+        $this->id        = $id;
+        $this->name      = $name;
+        $this->classId   = $classId;
+        $this->brandName = $brandName;
     }
 }
 
