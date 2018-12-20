@@ -34,7 +34,7 @@ function checkShopAvailability() {
         {
             url: "checkShopAvailability.php",
             success: function (result) {
-                if (result == 1)
+                if (result == '1')
                     $('.shopUnavailableMessage').css('display', 'block');
             },
         }
