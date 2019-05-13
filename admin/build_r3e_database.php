@@ -24,8 +24,8 @@ function getSecondaryJson()
 {
     write("Downloading secondary json...");
 
-    // $url         = "https://raw.githubusercontent.com/sector3studios/r3e-spectator-overlay/master/r3e-data.json";
-    $url         = "https://raw.githubusercontent.com/hiboudev/r3e-spectator-overlay/master/r3e-data.json";
+    $url = "https://raw.githubusercontent.com/sector3studios/r3e-spectator-overlay/master/r3e-data.json";
+    //$url         = "https://raw.githubusercontent.com/hiboudev/r3e-spectator-overlay/master/r3e-data.json";
     $fileContent = file_get_contents($url);
     $json        = null;
 
@@ -85,7 +85,7 @@ function getSecondaryData()
             $liveryId   = intval($liveryItem['Id']);
             $teamName   = trim($liveryItem['TeamName']);
             $liveryName = trim($liveryItem['Name']);
-            $imageUrl   = getImageUrl($liveryId, $teamName, $liveryName);
+            $imageUrl   = getImageUrl($liveryId);
 
             $secondaryData->liveries[$liveryId] = new Livery(
                 $liveryId,
@@ -160,7 +160,7 @@ function getStoreData()
                     $carId,
                     $classId,
                     getLiveryNumber($liveryValue["name"]),
-                    $liveryValue["thumb"],
+                    getImageUrl($liveryId),
                     $isFree,
                     null// No information about drivers at this point.
                 );
@@ -290,22 +290,9 @@ function write($text)
     echo $text . "<br />";
 }
 
-function getImageUrl($liveryId, $teamName, $liveryName)
+function getImageUrl($liveryId)
 {
-    // TODO nettoyer/optimiser ça
-    $teamName       = trim($teamName);
-    $teamName       = preg_replace('/ [^A-Za-z0-9] /', '-', $teamName);
-    $teamName       = str_replace(' ', '-', $teamName);
-    $unwanted_array = array('Š' => 'S', 'š' => 's', 'Ž' => 'Z', 'ž' => 'z', 'À' => 'A', 'Á' => 'A', 'Â'  => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E',
-        'Ê'                         => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I', 'Ñ'  => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ő' => 'O', 'Ø' => 'O', 'Ù' => 'U',
-        'Ú'                         => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'a', 'ç' => 'c',
-        'è'                         => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î'  => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o',
-        'ö'                         => 'o', 'ő' => 'o', 'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ü'  => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y');
-    $teamName   = strtolower(strtr($teamName, $unwanted_array));
-    $teamName   = preg_replace('/[^A-Za-z0-9\-]/', '', $teamName);
-    $liveryName = strtolower(str_replace('#', '', str_replace(' ', '-', preg_replace('/(\s+-\s+)|(-\s+)|(\s+-)/', '-', $liveryName))));
-
-    return "http://game.raceroom.com/r3e/assets/content/carlivery/{$teamName}-{$liveryName}-{$liveryId}-image-small.png";
+    return "http://game.raceroom.com/store/image_redirect?id={$liveryId}&size=small";
 }
 
 function createCsvFile($db)
