@@ -1,5 +1,8 @@
 <?php
 
+header('Content-Type: text/event-stream');
+header('Cache-Control: no-cache');
+
 write("PHP version: " . phpversion());
 mysqli_report(MYSQLI_REPORT_STRICT);
 
@@ -15,7 +18,8 @@ fillDatabase($db, $storeData, $secondaryData);
 createCsvFile($db);
 $db->close();
 
-write("Finished!");
+write("Job complete!");
+finish();
 
 /**
  * Return value can be null.
@@ -287,7 +291,17 @@ function query($db, $sql)
 
 function write($text)
 {
-    echo $text . "<br />";
+    $time = date("H:i:s");
+    echo "data: [$time] $text\n\n";
+    ob_flush();
+    flush();
+}
+
+function finish()
+{
+    echo "data: COMPLETE\n\n";
+    ob_flush();
+    flush();
 }
 
 function getImageUrl($liveryId)
