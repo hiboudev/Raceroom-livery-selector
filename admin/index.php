@@ -18,6 +18,8 @@
             }
 
             function updateDB () {
+                document.getElementById("outputField").innerHTML = "";
+
                 var source = new EventSource("build_r3e_database.php");
                 source.onmessage = function(event) {
                     if (event.data == "COMPLETE")
@@ -30,8 +32,8 @@
     </head>
 
     <body onLoad="onPageLoaded()">
-            <button onclick="updateDB()">Mettre à jour la base de données</button>
-            <div id="outputField">
-            </div>
+        <button onclick="updateDB()">Mettre à jour la base de données</button>
+        <div id="outputField">
+        </div>
     </body>
 </html>

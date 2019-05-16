@@ -16,6 +16,7 @@ try {
 $db = getDatabaseConnection();
 fillDatabase($db, $storeData, $secondaryData);
 createCsvFile($db);
+displaySummary($db);
 $db->close();
 
 write("Job complete!");
@@ -212,6 +213,20 @@ function fillDatabase($db, $storeData, $secondaryData)
                     VALUES (    $livery->id, \"$livery->title\", $livery->carId, $livery->classId,
                                 $livery->number, \"$livery->imageUrl\", $livery->isFree, \"$livery->drivers\", 0);");
     }
+}
+
+function displaySummary($db)
+{
+    $classesResult = query($db, "SELECT COUNT(*) FROM classes;");
+    $classCount    = $classesResult->fetch_row()[0];
+
+    $carsResult = query($db, "SELECT COUNT(*) FROM cars;");
+    $carCount   = $carsResult->fetch_row()[0];
+
+    $liveriesResult = query($db, "SELECT COUNT(*) FROM liveries;");
+    $liveryCount    = $liveriesResult->fetch_row()[0];
+
+    write("$classCount classes, $carCount cars, $liveryCount liveries.");
 }
 
 function getLiveryNumber($liveryName)
